@@ -380,7 +380,7 @@ exports.requestEmailChange = async (req, res, next) => {
       // This must be true for email link sign-in.
       handleCodeInApp: true,
       android: {
-        packageName: 'com.nucletic.time',
+        packageName: 'com.nucletic.locbridge',
         installApp: true,
         minimumVersion: '12',
       },
@@ -496,7 +496,7 @@ exports.sendChatmateRequest = async (req, res, next) => {
     await notificationRef.set({
       notificationId: 'notification_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
       senderName: username,
-      profileImage: profileImage,
+      profileImage: profileImage || null,
       senderId: senderUUID,
       receiverId: receiverUUID,
       notificationType: 'Chatmate_Request',
@@ -548,7 +548,8 @@ exports.getAllNotifications = async (req, res, next) => {
 exports.AcceptChatmateRequest = async (req, res, next) => {
   try {
     const { SenderUUID, ReciverUUID } = req.body;
-
+    console.log(SenderUUID, ReciverUUID);
+    
     const senderSnapshot = await DB.collection('users').where('userId', '==', SenderUUID).get();
     const receiverSnapshot = await DB.collection('users').where('userId', '==', ReciverUUID).get();
 
@@ -581,8 +582,8 @@ exports.AcceptChatmateRequest = async (req, res, next) => {
       const senderChatmates = (senderDoc.exists ? senderDoc.data().chatmates : []) || [];
       const receiverChatmates = (receiverDoc.exists ? receiverDoc.data().chatmates : []) || [];
 
-      const updatedSenderChatmates = [...senderChatmates, { userId: ReciverUUID, name: receiverName, profileImage: receiverProfileImage, }];
-      const updatedReceiverChatmates = [...receiverChatmates, { userId: SenderUUID, name: senderName, profileImage: senderProfileImage, }];
+      const updatedSenderChatmates = [...senderChatmates, { userId: ReciverUUID, name: receiverName, profileImage: receiverProfileImage || null, }];
+      const updatedReceiverChatmates = [...receiverChatmates, { userId: SenderUUID, name: senderName, profileImage: senderProfileImage || null, }];
 
       transaction.update(senderFollowersRef, { chatmates: updatedSenderChatmates });
       transaction.update(receiverFollowersRef, { chatmates: updatedReceiverChatmates });
@@ -802,7 +803,7 @@ exports.getContactDetails = async (req, res, next) => {
     return res.status(200).json({
       userDetails: {
         username: username,
-        profileImage: profileImage,
+        profileImage: profileImage || null,
         activityStatus: activityStatus,
         lastActive: lastActive,
         blockedFromOurSide: blockedFromOurSide,
@@ -956,7 +957,7 @@ exports.GetTales = async (req, res, next) => {
                 tale: data.tale,
                 username: data.username,
                 userId: data.userId,
-                profileImage: data.profileImage,
+                profileImage: data.profileImage || null,
               });
             }
           }
@@ -971,7 +972,7 @@ exports.GetTales = async (req, res, next) => {
         tale: myTales,
         username: userDoc.data().username,
         userId: userDoc.data().userId,
-        profileImage: userDoc.data().profileImage,
+        profileImage: userDoc.data().profileImage || null,
       },
     });
 
@@ -998,7 +999,7 @@ exports.UpdateSeenBy = async (req, res, next) => {
           return {
             ...tale,
             seenBy: [...(tale.seenBy || []), {
-              profileImage: WatcherData.profileImage,
+              profileImage: WatcherData.profileImage || null,
               username: WatcherData.username,
               userId: WatcherUUID,
               timestamp: Date.now()
@@ -1089,7 +1090,7 @@ exports.getBlockedAccounts = async (req, res, next) => {
           continue;
         } else {
           accounts.push({
-            profileImage: querySnapshot.docs[0].data().profileImage,
+            profileImage: querySnapshot.docs[0].data().profileImage || null,
             username: querySnapshot.docs[0].data().username,
             userId: userId,
           });
@@ -1203,7 +1204,7 @@ exports.addRecentSearches = async (req, res, next) => {
       name: name,
       username: username,
       userId: userId,
-      profileImage: profileImage,
+      profileImage: profileImage || null,
       searchAdded: new Date(),
     }
 
@@ -1478,3 +1479,5 @@ exports.removeChatmate = async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+

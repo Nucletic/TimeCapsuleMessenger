@@ -1,0 +1,12 @@
+#f7706e theme color
+#de3b40 dark Theme Color
+#323842 Text Color
+#171a1f Dark Text Color
+#9095a0 light color text
+
+
+Pages-
+Chat
+search user
+notifications
+Account
