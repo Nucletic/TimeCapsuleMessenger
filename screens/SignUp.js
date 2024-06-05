@@ -54,6 +54,9 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
         nameBorderColor: null,
       }));
     }
+
+    const isValidUsername = /^[a-zA-Z0-9._]+$/.test(data.username);
+
     if (!data.username || data.username.length === 0) {
       setCorrect(prevCorrect => ({
         ...prevCorrect,
@@ -61,6 +64,14 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
         userNameColor: '#FF0000',
         userNameBorderColor: '#FF0000',
       }));
+    } else if (!isValidUsername) {
+      setCorrect(prevCorrect => ({
+        ...prevCorrect,
+        userNameText: 'Invalid Username allowed charcters - a-z, A-Z, 0-9, _, .',
+        userNameColor: '#FF0000',
+        userNameBorderColor: '#FF0000',
+      }));
+
     } else if (data.username && data.username.length > 0) {
       setCorrect(prevCorrect => ({
         ...prevCorrect,
@@ -69,6 +80,7 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
         userNameBorderColor: null,
       }));
     }
+
     if (!data.email || data.email.length === 0) {
       setCorrect(prevCorrect => ({
         ...prevCorrect,
@@ -155,7 +167,6 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
       const encryptedEmail = encryptData(email, SECRET_KEY);
       const encryptedPassword = encryptData(password, SECRET_KEY);
 
-      // const response = await fetch('http://10.0.2.2:5000/users/register', {
       const response = await fetch('https://server-production-3bdc.up.railway.app/users/register', {
         method: 'POST',
         credentials: 'include',

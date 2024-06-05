@@ -63,9 +63,11 @@ const EditProfileOnRegister = ({ setLoggedIn }) => {
         formData.append('bio', bio.trim());
         formData.append('Interests', JSON.stringify(interests));
 
+
         if (profileImage) {
           formData.append('images', { uri: profileImage, name: `profileImage.jpeg`, type: 'image/jpeg' });
         }
+
         if (bannerImage) {
           formData.append('images', { uri: bannerImage, name: `bannerImage.jpeg`, type: 'image/jpeg' });
         }

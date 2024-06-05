@@ -14,6 +14,7 @@ import BlockAccountConfirmation from '../components/AccountComponents/BlockAccou
 
 
 import Constants from 'expo-constants';
+import ProfileLoaderAnimation from '../components/SmallEssentials/ProfileLoaderAnimation'
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
@@ -34,6 +35,8 @@ const Account = ({ navigation, route }) => {
   const [showMessageModal, setShowMessageModal] = useState(true);
 
   const { CustomUUID } = route.params || {};
+
+
 
   const getOwnProfile = async () => {
     try {
@@ -294,26 +297,42 @@ const Account = ({ navigation, route }) => {
             </Pressable>
           </View>
           <ScrollView style={styles.MainAccountContent}>
-            <View style={styles.ProfileImagesContainer}>
-              {CurrentUserData &&
-                <>
-                  {CurrentUserData?.bannerImage ?
-                    <Image source={{ uri: CurrentUserData.bannerImage }} style={styles.ProfileBannerImage} />
-                    : <Image source={require('../assets/Images/RegistrationBackground.jpg')} style={styles.ProfileBannerImage} />}
+            {((chatmate === null) && CustomUUID) &&
+              <View style={styles.ProfileLoaderContainer}>
+                <ProfileLoaderAnimation />
+              </View>}
+            <>
+              <View style={styles.ProfileImagesContainer}>
+                {CurrentUserData &&
+                  <>
+                    {CurrentUserData?.bannerImage ?
+                      <Image source={{ uri: CurrentUserData.bannerImage }} style={styles.ProfileBannerImage} />
+                      : <Image source={require('../assets/Images/RegistrationBackground.jpg')} style={styles.ProfileBannerImage} />}
 
-                  {CurrentUserData?.profileImage ?
-                    <Image source={{ uri: CurrentUserData.profileImage }} style={styles.ProfileImage} />
-                    : <Image source={require('../assets/Images/User.png')} style={styles.ProfileImage} />}
-                </>
-              }
-            </View>
-            <View style={styles.ProfileDetails}>
-              <Text style={styles.ProfileDetailsName}>{CurrentUserData?.username}</Text>
-              {!userBlocked && <Text style={styles.ProfileDetailsBio}>{CurrentUserData?.bio}</Text>}
+                    {CurrentUserData?.profileImage ?
+                      <Image source={{ uri: CurrentUserData.profileImage }} style={styles.ProfileImage} />
+                      : <Image source={require('../assets/Images/User.png')} style={styles.ProfileImage} />}
+                  </>
+                }
+              </View>
+              <View style={styles.ProfileDetails}>
+                <Text style={styles.ProfileDetailsName}>{CurrentUserData?.username}</Text>
+                {!userBlocked && <Text style={styles.ProfileDetailsBio}>{CurrentUserData?.bio}</Text>}
 
-              {!userBlocked &&
-                <View style={styles.ProfileFollowingInfo}>
-                  {CustomUUID &&
+                {!userBlocked &&
+                  <View style={styles.ProfileFollowingInfo}>
+                    {CustomUUID &&
+                      <Pressable onPress={() => {
+                        navigation.navigate('FriendsInfo', {
+                          userId: CurrentUserData?.userId,
+                          mutualFriends: mutualFriends,
+                          username: CurrentUserData.username,
+                          profileImage: CurrentUserData.profileImage
+                        })
+                      }} style={styles.FollowingCommonButton}>
+                        <Image source={require('../assets/Icons/CommonMates.png')} style={styles.FollowingCommonButtonImage} />
+                        <Text style={styles.FollowingButtonsText}>{mutualFriends ? mutualFriends.length : 0}</Text>
+                      </Pressable>}
                     <Pressable onPress={() => {
                       navigation.navigate('FriendsInfo', {
                         userId: CurrentUserData?.userId,
@@ -321,81 +340,72 @@ const Account = ({ navigation, route }) => {
                         username: CurrentUserData.username,
                         profileImage: CurrentUserData.profileImage
                       })
-                    }} style={styles.FollowingCommonButton}>
-                      <Image source={require('../assets/Icons/CommonMates.png')} style={styles.FollowingCommonButtonImage} />
-                      <Text style={styles.FollowingButtonsText}>{mutualFriends ? mutualFriends.length : 0}</Text>
-                    </Pressable>}
-                  <Pressable onPress={() => {
-                    navigation.navigate('FriendsInfo', {
-                      userId: CurrentUserData?.userId,
-                      mutualFriends: mutualFriends,
-                      username: CurrentUserData.username,
-                      profileImage: CurrentUserData.profileImage
-                    })
-                  }} style={styles.FollowingChatmatesButton}>
-                    <Image source={require('../assets/Icons/Chatmates.png')} style={styles.FollowingChatmatesButtonImage} />
-                    <Text style={styles.FollowingButtonsText}>{CurrentUserData?.chatmateCount || 0}</Text>
-                  </Pressable>
-                </View>}
-
-              {CustomUUID &&
-                (userBlocked ?
-                  (<Pressable style={styles.RequestedButton}>
-                    <Text style={styles.RequestedButtonText}>Unblock</Text>
-                  </Pressable>)
-                  : (<View style={styles.AddMateOptionsContainer}>
-                    {(!requested && !chatmate) && <Pressable onPress={() => { addChatmate() }} style={styles.AddChatMateButton}>
-                      <Image source={require('../assets/Icons/AddChatMate.png')} style={styles.AddChatMateButtonImage} />
-                      <Text style={styles.AddChatMateButtonText}>Add Chatmate</Text>
-                    </Pressable>}
-                    {requested &&
-                      <Pressable style={styles.RequestedButton}>
-                        <Text style={styles.RequestedButtonText}>Requested</Text>
-                      </Pressable>}
-                    {chatmate &&
-                      <>
-                        <Pressable onPress={() => { AddMessageContact() }} style={styles.RequestedButton}>
-                          <Text style={styles.RequestedButtonText}>Message</Text>
-                        </Pressable>
-                      </>}
-                  </View>))
-              }
-            </View>
-            {CurrentUserData?.interests &&
-              <>
-                {!userBlocked &&
-                  <View style={styles.ProfileInterestsContainer}>
-                    <Text style={styles.ProfileInterestsTitle}>INTERESTS</Text>
-                    <View style={styles.ProfileInterests}>
-                      {CurrentUserData?.interests.map((item, index) => {
-                        return (
-                          <View key={index} style={styles.MainProfileInterest}>
-                            <Text style={styles.MainProfileInterestText}>{item}</Text>
-                          </View>
-                        )
-                      })}
-                    </View>
+                    }} style={styles.FollowingChatmatesButton}>
+                      <Image source={require('../assets/Icons/Chatmates.png')} style={styles.FollowingChatmatesButtonImage} />
+                      <Text style={styles.FollowingButtonsText}>{CurrentUserData?.chatmateCount || 0}</Text>
+                    </Pressable>
                   </View>}
-              </>
-            }
-            {recommendedUsers.length > 0 &&
-              <View style={styles.RecommendedUsersContainer}>
-                <Text style={styles.RecommendedUsersTitle}>Recommended for you</Text>
-                <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.RecommendedUsersContent}>
-                  {recommendedUsers.map((user, i) => {
-                    return (
-                      <RecommendedSearchCard key={i} userId={user.userId} profileImage={user.profileImage} username={user.username} />
-                    )
-                  })}
-                </ScrollView>
-              </View>}
+
+                {(CustomUUID) &&
+                  (userBlocked ?
+                    (<Pressable style={styles.RequestedButton}>
+                      <Text style={styles.RequestedButtonText}>Unblock</Text>
+                    </Pressable>)
+                    : (<View style={styles.AddMateOptionsContainer}>
+                      {(!requested && !chatmate) && <Pressable onPress={() => { addChatmate() }} style={styles.AddChatMateButton}>
+                        <Image source={require('../assets/Icons/AddChatMate.png')} style={styles.AddChatMateButtonImage} />
+                        <Text style={styles.AddChatMateButtonText}>Add Chatmate</Text>
+                      </Pressable>}
+                      {requested &&
+                        <Pressable style={styles.RequestedButton}>
+                          <Text style={styles.RequestedButtonText}>Requested</Text>
+                        </Pressable>}
+                      {chatmate &&
+                        <>
+                          <Pressable onPress={() => { AddMessageContact() }} style={styles.RequestedButton}>
+                            <Text style={styles.RequestedButtonText}>Message</Text>
+                          </Pressable>
+                        </>}
+                    </View>))
+                }
+              </View>
+              {CurrentUserData?.interests &&
+                <>
+                  {!userBlocked &&
+                    <View style={styles.ProfileInterestsContainer}>
+                      <Text style={styles.ProfileInterestsTitle}>INTERESTS</Text>
+                      <View style={styles.ProfileInterests}>
+                        {CurrentUserData?.interests.map((item, index) => {
+                          return (
+                            <View key={index} style={styles.MainProfileInterest}>
+                              <Text style={styles.MainProfileInterestText}>{item}</Text>
+                            </View>
+                          )
+                        })}
+                      </View>
+                    </View>}
+                </>
+              }
+              {recommendedUsers.length > 0 &&
+                <View style={styles.RecommendedUsersContainer}>
+                  <Text style={styles.RecommendedUsersTitle}>Recommended for you</Text>
+                  <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.RecommendedUsersContent}>
+                    {recommendedUsers.map((user, i) => {
+                      return (
+                        <RecommendedSearchCard key={i} userId={user.userId} profileImage={user.profileImage} username={user.username} />
+                      )
+                    })}
+                  </ScrollView>
+                </View>}
+            </>
           </ScrollView>
+
           <SettingBottomSheet settingSheetOpen={settingSheetOpen} setSettingSheetOpen={setSettingSheetOpen} setBlockSheetOpen={setBlockSheetOpen} CustomUUID={CustomUUID} />
 
           <BlockAccountConfirmation blockSheetOpen={blockSheetOpen} setBlockSheetOpen={setBlockSheetOpen} CustomUUID={CustomUUID}
             username={CurrentUserData?.username} profileImage={CurrentUserData?.profileImage} />
         </>}
-      
+
     </View>
   )
 }
@@ -657,5 +667,13 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  ProfileLoaderContainer: {
+    width: Width,
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 1,
   },
 });

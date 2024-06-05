@@ -84,9 +84,9 @@ const Index = () => {
 export default Index;
 
 
-// cd C:\Users\pc\AppData\Local\Android\Sdk\tools
-// emulator -avd Pixel_4_XL_API_34 -feature -Vulkan
-// emulator -avd Pixel_2_API_34 -feature -Vulkan
+// D:\AndroidSDK\emulator
+// emulator -avd Pixel_4_API_34 -feature -Vulkan
+// emulator -avd Pixel_4_XL_API_34x -feature -Vulkan
 
 // for Cold Boot
 // -no-snapshot-load

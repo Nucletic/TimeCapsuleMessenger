@@ -11,11 +11,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-const FriendsInfoMateCard = ({ username, profileImage, userId }) => {
+const FriendsInfoMateCard = ({ username, profileImage, userId, ownCustomUUID, setLevel }) => {
 
   const navigation = useNavigation();
   const [requested, setRequested] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(null);
 
   const addChatmate = async () => {
     try {
@@ -65,32 +65,13 @@ const FriendsInfoMateCard = ({ username, profileImage, userId }) => {
       const data = await response.json();
       if (response.status === 200) {
         setIsFollowing(data.isFollowing);
+        setLevel(prev => prev + 1);
+
       }
     } catch (error) {
       throw new Error(error);
     }
   }
-
-  useEffect(() => {
-    if (userId) {
-      CheckFollowing(userId);
-    }
-  }, []);
-
-
-  const whatToDo = () => {
-    if (requested) {
-      return;
-    } else if (isFollowing) {
-      AddMessageContact();
-    } else {
-      addChatmate();
-    }
-  }
-
-
-
-
 
   const AddMessageContact = async () => {
     try {
@@ -114,24 +95,53 @@ const FriendsInfoMateCard = ({ username, profileImage, userId }) => {
     }
   }
 
+  const onMatePress = () => {
+    if (requested) {
+      return;
+    } else if (isFollowing) {
+      AddMessageContact();
+    } else {
+      addChatmate();
+    }
+  }
+
+  useEffect(() => {
+    if (userId) {
+      CheckFollowing(userId);
+    }
+  }, []);
+
+
+
   return (
-    <Pressable onPress={() => { navigation.navigate('SearchStack', { screen: 'Account', params: { CustomUUID: userId } }) }} style={styles.FriendsInfoMateCard}>
-      <View style={styles.FriendsInfoMateCardLeft}>
-        {profileImage && <Image source={{ uri: profileImage }} style={styles.FriendsInfoMateCardImage} />}
-        <Text style={styles.FriendsInfoMateCardText}>{username && username}</Text>
-      </View>
-      <View style={styles.FriendsInfoMateCardRight}>
-        <Pressable onPress={() => { whatToDo() }} style={[styles.AddMateButton, (requested || isFollowing) && {
-          backgroundColor: '#fff',
-          borderWidth: moderateScale(2),
-          borderColor: '#F7706E',
-        }]}>
-          {requested ? <Text style={[styles.AddMateButtonText, { color: '#F7706E' }]}>Requested</Text>
-            : isFollowing ? <Text style={[styles.AddMateButtonText, { color: '#F7706E' }]}>Message</Text>
-              : <Text style={styles.AddMateButtonText}>Add Chatmate</Text>}
-        </Pressable>
-      </View>
-    </Pressable>
+    <>
+      {isFollowing !== null &&
+        <Pressable onPress={() => {
+          if (ownCustomUUID === userId) {
+            navigation.navigate('AccountStack', { screen: 'Account' })
+          } else {
+            navigation.navigate('SearchStack', { screen: 'Account', params: { CustomUUID: userId } })
+          }
+        }} style={styles.FriendsInfoMateCard}>
+          <View style={styles.FriendsInfoMateCardLeft}>
+            {profileImage && <Image source={{ uri: profileImage }} style={styles.FriendsInfoMateCardImage} />}
+            <Text style={styles.FriendsInfoMateCardText}>{username && username}</Text>
+          </View>
+          <View style={styles.FriendsInfoMateCardRight}>
+            {(ownCustomUUID !== userId) &&
+              <Pressable onPress={() => { onMatePress() }} style={[styles.AddMateButton, (requested || isFollowing) && {
+                backgroundColor: '#fff',
+                borderWidth: moderateScale(2),
+                borderColor: '#F7706E',
+              }]}>
+
+                {requested && <Text style={[styles.AddMateButtonText, { color: '#F7706E' }]}>Requested</Text>}
+                {isFollowing && <Text style={[styles.AddMateButtonText, { color: '#F7706E' }]}>Message</Text>}
+                {(!requested && !isFollowing) && <Text style={styles.AddMateButtonText}>Add Chatmate</Text>}
+              </Pressable>}
+          </View>
+        </Pressable>}
+    </>
   )
 }
 

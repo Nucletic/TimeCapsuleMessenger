@@ -122,11 +122,11 @@ const TabNavigation = () => {
         tabBarStyle: { display: getRouteName(route) },
         tabBarIcon: ({ focused }) => {
           return (
-            <View style={styles.tabIconContainer}>
+            <Pressable onPress={() => { navigation.navigate('SearchStack', { screen: 'Search' }) }} style={styles.tabIconContainer}>
               <View style={styles.tabIconButton}>
                 <Image source={focused ? require('../assets/Icons/SearchTabButton.png') : require('../assets/Icons/SearchTabButtonDark.png')} style={styles.tabIcon} />
               </View>
-            </View>
+            </Pressable>
           )
         }
       })} />

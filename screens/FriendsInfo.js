@@ -20,12 +20,20 @@ const bannerAdUnitId1 = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-45984598
 
 const FriendsInfo = ({ navigation, route }) => {
 
+
   const { userId, mutualFriends, username, profileImage } = route.params;
 
   const [chatmates, setChatmates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [ownCustomUUID, setOwnCustomUUID] = useState(true);
 
-  const FriendsInfoTabs = [<MainContentOne chatmates={chatmates} />, <MainContentTwo chatmates={mutualFriends} />];
+  AsyncStorage.getItem('CustomUUID').then((CustomUUID) => {
+    setOwnCustomUUID(CustomUUID);
+  });
+
+  const FriendsInfoTabs = [<MainContentOne chatmates={chatmates} ownCustomUUID={ownCustomUUID} />,
+  <MainContentTwo chatmates={mutualFriends} ownCustomUUID={ownCustomUUID} />];
+
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const indicatorPosition = scrollX.interpolate({
@@ -122,13 +130,13 @@ const FriendsInfo = ({ navigation, route }) => {
   )
 }
 
-const MainContentOne = ({ chatmates }) => {
+const MainContentOne = ({ chatmates, ownCustomUUID }) => {
 
   const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [level, setLevel] = useState(0);
 
 
   useEffect(() => {
@@ -138,7 +146,10 @@ const MainContentOne = ({ chatmates }) => {
       setSearchResults(filteredChatmates);
     }
     setLoading(false);
+    setLevel(0)
   }, [searchQuery, chatmates]);
+
+
 
 
   return (
@@ -154,9 +165,11 @@ const MainContentOne = ({ chatmates }) => {
           <LoaderAnimation size={40} color={'#49505B'} />
         </View>) :
         (<View style={styles.MainContentCards}>
+          {(level !== searchResults.length && searchQuery.length === 0) &&
+            <Image source={require('../assets/Animations/LoadingFriendsInfo.gif')} style={styles.loadingFriendsInfoGIF} />}
           {searchResults?.length > 0 ? (searchResults?.map((chatmate, index) => {
             return (
-              <FriendsInfoMateCard key={index} username={chatmate.name} profileImage={chatmate.profileImage} userId={chatmate.userId} />
+              <FriendsInfoMateCard key={index} setLevel={setLevel} ownCustomUUID={ownCustomUUID} username={chatmate.name} profileImage={chatmate.profileImage} userId={chatmate.userId} />
             )
           }))
             : (<NoUserFoundAnimation titleText={`No Chatmates found${searchQuery && ` with "${searchQuery}"`}`} />)}
@@ -170,12 +183,14 @@ const MainContentOne = ({ chatmates }) => {
     </View>
   )
 }
-const MainContentTwo = ({ chatmates }) => {
+const MainContentTwo = ({ chatmates, ownCustomUUID }) => {
 
   const inputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [level, setLevel] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -184,6 +199,7 @@ const MainContentTwo = ({ chatmates }) => {
       setSearchResults(filteredChatmates);
     }
     setLoading(false);
+    setLevel(0)
   }, [searchQuery, chatmates]);
 
 
@@ -202,14 +218,16 @@ const MainContentTwo = ({ chatmates }) => {
           <LoaderAnimation size={40} color={'#49505B'} />
         </View>) :
         (<View style={styles.MainContentCards}>
+          {(level !== searchResults.length && searchQuery.length === 0) &&
+            <Image source={require('../assets/Animations/LoadingFriendsInfo.gif')} style={styles.loadingFriendsInfoGIF} />}
           {searchResults?.length > 0 ? (searchResults?.map((chatmate, index) => {
             return (
-              <FriendsInfoMateCard key={index} username={chatmate.name} profileImage={chatmate.profileImage} userId={chatmate.userId} />
+              <FriendsInfoMateCard key={index} username={chatmate.name} setLevel={setLevel} ownCustomUUID={ownCustomUUID} profileImage={chatmate.profileImage} userId={chatmate.userId} />
             )
           }))
             : (<NoUserFoundAnimation titleText={`No Chatmates found${searchQuery && ` with "${searchQuery}"`}`} />)}
         </View>)}
-        <View style={{ position: 'absolute', bottom: 0 }}>
+      <View style={{ position: 'absolute', bottom: 0 }}>
         <BannerAd
           unitId={bannerAdUnitId1}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
@@ -324,4 +342,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  loadingFriendsInfoGIF: {
+    width: Width,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 1,
+  }
 });

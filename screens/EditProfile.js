@@ -34,7 +34,6 @@ const EditProfile = ({ navigation }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      // const response = await fetch(`http://10.0.2.2:5000/users/profile`, {
       const response = await fetch(`https://server-production-3bdc.up.railway.app/users/profile`, {
         method: 'GET',
         credentials: 'include',
@@ -63,43 +62,62 @@ const EditProfile = ({ navigation }) => {
     }
   }
 
-
   const saveProfile = async () => {
     try {
       SetSaving(true);
       const formData = new FormData();
+
+      const isValidUsername = /^[a-zA-Z0-9._]+$/.test(username);
+      if (!isValidUsername) {
+        return setUsernameText(<Text style={[styles.userNamePrecautionsText, {
+          color: '#F7706E',
+        }]}>your user name cannot contain any special charcters and white spaces excepting - a-z, A-Z, 0-9, _, .</Text>)
+      }
 
       if (oldUser.username !== username) {
         const lastUpdateDate = new Date(oldUser.lastUsernameUpdate._seconds * 1000);
         const currentDate = new Date();
         const differenceInMilliseconds = currentDate - lastUpdateDate;
         const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
-        if (differenceInDays >= 14) {
+        if (differenceInDays >= 7) {
           formData.append('username', username.trim());
         } else {
           setUsernameText(<Text style={[styles.userNamePrecautionsText, {
             color: '#F7706E',
-          }]}>You can change your username twice every 14 days</Text>)
+          }]}>You can change your username once every 14 days</Text>)
         }
-
       }
+
       if (oldUser.name !== Name) formData.append('name', Name.trim());
+
+      if (oldUser.bannerImage) {
+        formData.append('bannerImage', oldUser.bannerImage.trim());
+      }
+
+      if (oldUser.profileImage) {
+        formData.append('profileImage', oldUser.profileImage.trim());
+      }
+
+
       if (oldUser.bio !== bio) formData.append('bio', bio.trim());
+
       if (JSON.stringify(oldUser.interests) !== JSON.stringify(Interests)) {
         formData.append('Interests', JSON.stringify(Interests));
       }
+
       if (profileImage !== oldUser.profileImage) {
         formData.append('images', { uri: profileImage, name: `profileImage.jpeg`, type: 'image/jpeg' });
       }
+
       if (bannerImage !== oldUser.bannerImage) {
         formData.append('images', { uri: bannerImage, name: `bannerImage.jpeg`, type: 'image/jpeg' });
       }
+
 
       if (formData._parts.length > 0) {
         const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
         const encryptedIdToken = encryptData(idToken, SECRET_KEY);
 
-        // const response = await fetch(`http://10.0.2.2:5000/users/editProfile`, {
         const response = await fetch(`https://server-production-3bdc.up.railway.app/users/editProfile`, {
           method: 'PUT',
           credentials: 'include',
@@ -135,6 +153,7 @@ const EditProfile = ({ navigation }) => {
       }
     }
   }
+
   const pickBannerImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status === 'granted') {

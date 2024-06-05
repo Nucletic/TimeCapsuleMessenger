@@ -2,7 +2,6 @@ import { Pressable, StyleSheet, Text, View, Image, TextInput, ScrollView, FlatLi
 import React, { useState, useEffect, useRef } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
-import { Audio } from 'expo-av'
 import * as ImagePicker from 'expo-image-picker'
 import { FIREBASE_DB, FIREBASE_STORAGE } from '../firebaseConfig'
 import { collection, doc, getDoc, onSnapshot, updateDoc, arrayUnion, increment, Timestamp, query, where, getDocs, addDoc, deleteDoc, orderBy, startAfter, limit, endBefore } from 'firebase/firestore'
@@ -16,18 +15,16 @@ import LoaderAnimation from '../components/SmallEssentials/LoaderAnimation'
 const Chatbox = ({ navigation, route }) => {
 
   const [recording, setRecording] = useState(null);
+  const [Sound, setSound] = useState(null);
+  const [isRecording, setIsRecording] = useState(null);
   const [recordedURI, setRecordedURI] = useState(null);
-  const [isRecording, setIsRecording] = useState(false);
   const [soundLevels, setSoundLevels] = useState([]);
   const [recordingDuration, setRecordingDuration] = useState('00:00');
-  const [sound, setSound] = useState(null);
   const [playingSound, setPlayingSound] = useState(false);
   const [attachedImages, setAttachedImages] = useState([]);
-  const [showEmojiBoard, setShowEmojiBoard] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState(null);
   const [CustomUUID, setCustomUUID] = useState(null);
-  const [TimeTextAnimationCompleted, setTimeTextAnimationCompleted] = useState(false);
   const [activityStatus, setActivityStatus] = useState(onlineStatus ? onlineStatus : 'inactive');
   const [lastActive, setLastActive] = useState(null);
   const [chatSettingSheetOpen, setChatSettingSheetOpen] = useState(false);
@@ -47,67 +44,6 @@ const Chatbox = ({ navigation, route }) => {
 
   const { chatId, username, profileImage, blockedFromOther, blockedFromOur, onlineStatus, lastOnline } = route.params;
 
-  const audioTimeAnimation = useRef(new Animated.Value(0)).current;
-  const audioBinAnimation = useRef(new Animated.Value(0)).current;
-
-  const startAudioTimeAnimation = () => {
-    Animated.timing(audioTimeAnimation, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const stopAudioTimeAnimation = () => {
-    Animated.timing(audioTimeAnimation, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start(() => {
-      setTimeTextAnimationCompleted(true);
-    });
-  };
-
-  const audioTimeAnimationInterpolate = audioTimeAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [moderateScale(0), Width - moderateScale(110)],
-  });
-
-  const startRecording = async () => {
-    try {
-      setIsRecording(true);
-      startAudioTimeAnimation();
-      const permission = await Audio.requestPermissionsAsync();
-      if (permission.status === 'granted') {
-        const { recording } = await Audio.Recording.createAsync(
-          Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY,
-          onRecordingStatusUpdate
-        );
-        setRecording(recording);
-        setIsRecording(true);
-        setRecordedURI(recording.getURI());
-      } else {
-        console.log('No Permission Granted');
-      }
-    } catch (error) { }
-  };
-
-  const stopRecording = async () => {
-    stopAudioTimeAnimation();
-    setIsRecording(false);
-    await recording.stopAndUnloadAsync();
-  };
-
-  const onRecordingStatusUpdate = (status) => {
-    if (status.isRecording && status.canRecord) {
-      setSoundLevels(prevLevels => [...prevLevels, status.metering]);
-      setRecordingDuration(status.durationMillis);
-
-      // Update UI or trigger sound bars animation
-      // You can use soundLevels array to adjust the height of bars representing sound levels
-    }
-  };
-
   const getDurationFormatted = (milliseconds) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -117,37 +53,6 @@ const Chatbox = ({ navigation, route }) => {
     return `${formattedMinutes}:${formattedSeconds}`;
   };
 
-  const loadSound = async (URI) => {
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: URI }
-    );
-    setSound(sound);
-  };
-
-  const playSound = async (URI) => {
-    try {
-      if (!sound) {
-        await loadSound(URI);
-      }
-      if (sound) {
-        await sound.playAsync();
-        setPlayingSound(true);
-      }
-    } catch (error) {
-      console.error('Error playing sound:', error.message);
-    }
-  };
-
-  const stopSound = async () => {
-    try {
-      if (sound) {
-        setPlayingSound(false);
-        await sound.stopAsync();
-      }
-    } catch (error) {
-      console.error('Error stopping sound:', error.message);
-    }
-  };
 
   // Image Picker Code
 
