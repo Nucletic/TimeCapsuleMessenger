@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, Image } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
 import { Height } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import TaleCard from '../components/ChatsComponents/TaleCard'
@@ -19,6 +19,7 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
 import { AppOpenAd, BannerAd, BannerAdSize, TestIds, AdEventType } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 
 const adUnitId = __DEV__ ? TestIds.APP_OPEN : 'ca-app-pub-4598459833894527/4947014150';
@@ -33,6 +34,13 @@ const appOpenAd = AppOpenAd.createForAdRequest(adUnitId, {
 
 
 const Chats = ({ navigation }) => {
+
+  const { showAds } = useContext(AppContext);
+
+  useEffect(() => {
+    console.log(showAds);
+  }, [showAds])
+
 
   const [loaded, setLoaded] = useState(false);
 
@@ -55,11 +63,11 @@ const Chats = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && showAds) {
       appOpenAd.show();
       setLoaded(false);
     }
-  }, [loaded])
+  }, [loaded, showAds])
 
 
 
@@ -85,7 +93,6 @@ const Chats = ({ navigation }) => {
 
   const getChatContacts = async (CustomUUID, encryptedIdToken) => {
     try {
-      console.log('first', CustomUUID);
       const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getChatContacts/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
@@ -96,9 +103,7 @@ const Chats = ({ navigation }) => {
         },
       })
       const data = await response.json();
-      console.log(response.status)
       if (response.status === 200) {
-        console.log(data.contacts);
         listenChatChanges();
         setContacts(data.contacts);
       }
@@ -115,7 +120,6 @@ const Chats = ({ navigation }) => {
         const contactCustomUUID = CustomUUID === contact.chatId.split('_')[0]
           ? contact.chatId.split('_')[1] : contact.chatId.split('_')[0];
 
-        // const response = await fetch(`http://10.0.2.2:5000/users/getContactDetails/${contactCustomUUID}`, {
         const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getContactDetails/${contactCustomUUID}`, {
           method: 'GET',
           credentials: 'include',
@@ -137,7 +141,6 @@ const Chats = ({ navigation }) => {
   }
   const getContactTales = async (CustomUUID, encryptedIdToken) => {
     try {
-      // const response = await fetch(`http://10.0.2.2:5000/users/GetTales/:${1}/:${10}`, {
       const response = await fetch(`https://server-production-3bdc.up.railway.app/users/GetTales/:${1}/:${10}`, {
         method: 'GET',
         credentials: 'include',
@@ -205,7 +208,6 @@ const Chats = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('its running');
       if (contacts && contactDetails) {
         listenActivityChanges();
       }
@@ -279,12 +281,13 @@ const Chats = ({ navigation }) => {
             </View>
           </>}
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

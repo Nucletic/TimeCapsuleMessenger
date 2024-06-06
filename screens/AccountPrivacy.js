@@ -1,5 +1,5 @@
 import { Pressable, Image, StyleSheet, Text, View, ScrollView, TextInput, Animated } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import { encryptData, decryptData } from '../EncryptData'
@@ -11,11 +11,14 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1975621483';
 
 
 const AccountPrivacy = ({ navigation }) => {
+
+  const { showAds } = useContext(AppContext);
 
   const [privateAccount, setPrivateAccount] = useState(null);
 
@@ -66,7 +69,6 @@ const AccountPrivacy = ({ navigation }) => {
   const checkAccountPrivacy = async () => {
     const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
     const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-    // const response = await fetch(`http://10.0.2.2:5000/users/profile`, {
     const response = await fetch(`https://server-production-3bdc.up.railway.app/users/profile`, {
       method: 'GET',
       credentials: 'include',
@@ -88,7 +90,6 @@ const AccountPrivacy = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
 
-      // const response = await fetch('http://10.0.2.2:5000/users/AccountPrivacy', {
       const response = await fetch('https://server-production-3bdc.up.railway.app/users/AccountPrivacy', {
         method: 'PUT',
         credentials: 'include',
@@ -149,10 +150,11 @@ const AccountPrivacy = ({ navigation }) => {
           </Text>
         </View>
       </ScrollView>
-      <BannerAd
-        unitId={bannerAdUnitId}
-        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-      />
+      {(!showAds || showAds === false) &&
+        <BannerAd
+          unitId={bannerAdUnitId}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />}
     </View>
   )
 }

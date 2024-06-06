@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable, Image, ScrollView, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -11,6 +11,7 @@ import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1715681311';
 
@@ -26,6 +27,7 @@ const ChatInfo = ({ navigation, route }) => {
     setCustomUUID(CustomUUID);
   });
 
+  const { showAds } = useContext(AppContext);
 
   const getSharedMedia = async () => {
     try {
@@ -189,12 +191,13 @@ const ChatInfo = ({ navigation, route }) => {
             </View>
           </ScrollView>
         </>}
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

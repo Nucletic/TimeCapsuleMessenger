@@ -1,7 +1,8 @@
 import { Pressable, StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
+import AppContext from '../ContextAPI/AppContext'
 
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
@@ -10,6 +11,10 @@ const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-459845983
 
 
 const SettingsPrivacy = ({ navigation }) => {
+
+  const { showAds } = useContext(AppContext);
+
+
   return (
     <View style={styles.Container}>
       <View style={styles.SettingsPrivacyNav}>
@@ -49,13 +54,24 @@ const SettingsPrivacy = ({ navigation }) => {
           </View>
           <Image source={require('../assets/Icons/RightChevron.png')} style={styles.SettingsOptionButtonLeftArrow} />
         </Pressable>
+        <Pressable onPress={() => { navigation.navigate('Subscribe') }} style={styles.SettingsOptionButton}>
+          <View style={styles.SettingsOptionButtonLeft}>
+            <Image source={require('../assets/Icons/Member.png')} style={styles.SettingsOptionButtonImage} />
+            <View style={styles.SettingsOptionDetails}>
+              <Text style={styles.SettingsOptionDetailsTextOne}>Block Ads For Free</Text>
+              <Text style={styles.SettingsOptionDetailsTextTwo}>Watch 15 ads and go Ad Free For a month</Text>
+            </View>
+          </View>
+          <Image source={require('../assets/Icons/RightChevron.png')} style={styles.SettingsOptionButtonLeftArrow} />
+        </Pressable>
       </View>
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

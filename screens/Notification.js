@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import TimeIndicatorTitle from '../components/NotificationComponents/TimeIndicatorTitle'
@@ -18,12 +18,16 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/9355418052';
 
 
 
 const Notification = ({ navigation }) => {
+
+
+  const { showAds } = useContext(AppContext);
 
   const [loading, setLoading] = useState(true);
   const [followRequests, setFollowRequests] = useState([]);
@@ -246,12 +250,13 @@ const Notification = ({ navigation }) => {
             </>
         }
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

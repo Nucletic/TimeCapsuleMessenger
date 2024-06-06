@@ -180,7 +180,6 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
         })
       });
       const data = await response.json();
-      console.log(data.message);
       if (response.status === 200) {
         if (data.message === 'duplicateUsername') {
           setCorrect(prevCorrect => ({

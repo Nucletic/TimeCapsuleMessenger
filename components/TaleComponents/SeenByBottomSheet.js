@@ -89,7 +89,7 @@ const SeenByBottomSheet = ({ ByData, settingSheetOpen, setSettingSheetOpen, byTy
 
   return (
     <View style={styles.Container}>
-      <Pressable onPress={() => { console.log('first'); setSettingSheetOpen(false) }} style={{ pointerEvents: settingSheetOpen ? 'auto' : 'none' }}>
+      <Pressable onPress={() => {setSettingSheetOpen(false) }} style={{ pointerEvents: settingSheetOpen ? 'auto' : 'none' }}>
         <Animated.View style={[styles.ContainerCover, { opacity: OpacityAnimationInterpolate }]} />
       </Pressable>
       <Animated.View style={[styles.ContainerMainContent, { bottom: HeightAnimationInterpolate }]}>

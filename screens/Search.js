@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import SearchBar from '../components/SearchComponents/SearchBar'
@@ -13,12 +13,15 @@ import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/5719425372';
 
 
 
 const Search = () => {
+
+  const { showAds } = useContext(AppContext);
 
   const [recommendedUsers, setRecommendedUsers] = useState([]);
   const [CustomUUID, setCustomUUID] = useState(null);
@@ -68,12 +71,13 @@ const Search = () => {
           )
         })}
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

@@ -1,5 +1,5 @@
 import { Pressable, Image, StyleSheet, Text, View, ScrollView, TextInput } from 'react-native'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import BlockedAccountCard from '../components/BlockedAccountComponents/BlockedAccountCard'
@@ -18,6 +18,7 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/7457627420';
 
@@ -26,6 +27,9 @@ const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-459845983
 
 
 const BlockedAccounts = ({ navigation }) => {
+
+
+  const { showAds } = useContext(AppContext);
 
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState(null);
@@ -134,12 +138,14 @@ const BlockedAccounts = ({ navigation }) => {
         </ScrollView>}
       <ConfirmationPrompt showConfirmationPrompt={showConfirmationPrompt} TitleText={`Are you sure you wants to unblock ${unblockingUser?.username}?`}
         onPressOne={() => { setShowConfirmationPrompt(false) }} onPressTwo={() => { unblockUser(unblockingUser.userId) }} OneText={'Cancel'} TwoText={'Unblock'} />
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>
+      }
     </View>
   )
 }

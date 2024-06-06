@@ -57,9 +57,6 @@ const ChatSearch = ({ navigation, route }) => {
     inputRef.current.focus();
   }, []);
 
-  useEffect(() => {
-    console.log(filteredContactDetails.length, filteredContacts.length);
-  }, [filteredContactDetails, filteredContacts])
 
 
 

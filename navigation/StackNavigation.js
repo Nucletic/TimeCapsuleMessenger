@@ -21,6 +21,7 @@ import Notification from '../screens/Notification';
 import EditProfileOnRegister from '../screens/EditProfileOnRegister';
 import OwnTale from '../screens/OwnTale';
 import ImageShow from '../screens/ImageShow';
+import Subscribe from '../screens/Subscribe';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ export const AccountStack = () => {
       <Stack.Screen name='AccountPrivacy' component={AccountPrivacy} />
       <Stack.Screen name='BlockedAccounts' component={BlockedAccounts} />
       <Stack.Screen name='FriendsInfo' options={{ animation: 'fade_from_bottom' }} component={FriendsInfo} />
+      <Stack.Screen name='Subscribe' component={Subscribe} />
     </Stack.Navigator>
   )
 }

@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, Text, View, Animated, ScrollView, TextInput, FlatList } from 'react-native'
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 import { moderateScale } from 'react-native-size-matters';
 import { Height, Width } from '../utils';
 import FriendsInfoMateCard from '../components/AccountComponents/FriendsInfoMateCard';
@@ -13,6 +13,7 @@ import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext';
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1715681311';
 const bannerAdUnitId1 = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/4669147712';
@@ -139,6 +140,10 @@ const MainContentOne = ({ chatmates, ownCustomUUID }) => {
   const [level, setLevel] = useState(0);
 
 
+  const { showAds } = useContext(AppContext);
+
+
+
   useEffect(() => {
     setLoading(true);
     if (chatmates && chatmates.length > 0) {
@@ -174,12 +179,13 @@ const MainContentOne = ({ chatmates, ownCustomUUID }) => {
           }))
             : (<NoUserFoundAnimation titleText={`No Chatmates found${searchQuery && ` with "${searchQuery}"`}`} />)}
         </View>)}
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }
@@ -191,6 +197,8 @@ const MainContentTwo = ({ chatmates, ownCustomUUID }) => {
   const [loading, setLoading] = useState(true);
 
   const [level, setLevel] = useState(0);
+  const { showAds } = useContext(AppContext);
+
 
   useEffect(() => {
     setLoading(true);
@@ -227,12 +235,13 @@ const MainContentTwo = ({ chatmates, ownCustomUUID }) => {
           }))
             : (<NoUserFoundAnimation titleText={`No Chatmates found${searchQuery && ` with "${searchQuery}"`}`} />)}
         </View>)}
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId1}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId1}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image, TextInput, Pressable, Keyboard, ScrollView } from 'react-native';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useContext, useCallback } from 'react';
 import { moderateScale } from 'react-native-size-matters';
 import { Height, Width } from '../utils';
 import SearchProfileCard from '../components/SearchComponents/SearchProfileCard';
@@ -7,6 +7,7 @@ import { FIREBASE_DB, FIREBASE_AUTH } from '../firebaseConfig';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import LoaderAnimation from '../components/SmallEssentials/LoaderAnimation';
 import NoUserFoundAnimation from '../components/SmallEssentials/NoUserFoundAnimation';
+import AppContext from '../ContextAPI/AppContext';
 
 import { encryptData, decryptData } from '../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -29,6 +30,9 @@ const SearchAccount = ({ navigation }) => {
   const [noUserFound, setNoUserFound] = useState(false);
   const [searches, setSearches] = useState([]);
   const [CustomUUID, setCustomUUID] = useState(null);
+
+  const { showAds } = useContext(AppContext);
+
 
   useEffect(() => {
     inputRef.current.focus();
@@ -183,12 +187,14 @@ const SearchAccount = ({ navigation }) => {
             </ScrollView>
           </>)}
       </Pressable>
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

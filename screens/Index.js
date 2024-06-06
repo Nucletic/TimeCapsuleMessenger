@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import MainNavigation from '../navigation/MainNavigation'
 import Registration from './Registration'
 import * as WebBrowser from "expo-web-browser";
@@ -9,10 +9,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 SplashScreen.preventAutoHideAsync();
 
 import Constants from 'expo-constants';
-import { collection, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import AppContext from '../ContextAPI/AppContext';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 const Index = () => {
+
+  const { setShowAds, showAds } = useContext(AppContext)
 
   WebBrowser.maybeCompleteAuthSession();
 
@@ -26,9 +29,10 @@ const Index = () => {
       try {
         if (user) {
           if (user.emailVerified) {
-            await updateActivityStatus();
             setLoggedIn(true);
             setLoading(false);
+            await updateActivityStatus();
+            checkMember(user.uid)
           } else {
             setLoggedIn(false);
             setLoading(false);
@@ -43,6 +47,26 @@ const Index = () => {
     });
     return () => unsubscribe();
   }
+
+
+  const checkMember = async (uid) => {
+    try {
+      const docRef = doc(FIREBASE_DB, 'users', uid)
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.watchedAds === 15) {
+          setShowAds(true)
+        }
+      } else {
+        console.log("No such document!");
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   const updateActivityStatus = async () => {
     try {

@@ -177,7 +177,6 @@ const AddTale = ({ navigation, route }) => {
     const updatedTexts = [...Texts];
     updatedTexts[index].text = text;
     if (updatedTexts[index].text.length === 0) {
-      console.log('first')
       updatedTexts.splice(index, 1);
     }
     setTexts(updatedTexts);
@@ -298,7 +297,6 @@ const AddTale = ({ navigation, route }) => {
       updatedTexts[currentTextIndex].position.Y = translateY.value;
       setTexts(updatedTexts);
     }
-    console.log(Texts[currentTextIndex]);
   }, [position.value, translateY.value])
 
   useEffect(() => {

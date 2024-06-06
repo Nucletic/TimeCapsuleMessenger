@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { moderateScale } from 'react-native-size-matters';
 
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext';
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/7353685640';
 
@@ -12,18 +13,21 @@ const ImageShow = ({ navigation, route }) => {
 
   const { uri } = route.params;
 
+  const { showAds } = useContext(AppContext);
+
   return (
     <View styles={styles.ImageShowContainer}>
       <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
         <Image source={require('../assets/Icons/BackButtonWhite.png')} style={styles.BackButtonImage} />
       </Pressable>
       {uri && <Image source={{ uri: uri }} style={styles.MainImage} />}
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>}
     </View>
   )
 }

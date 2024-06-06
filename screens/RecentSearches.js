@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View, Image, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { moderateScale } from 'react-native-size-matters'
 import { Height, Width } from '../utils'
 import SearchProfileCard from '../components/SearchComponents/SearchProfileCard'
@@ -13,6 +13,7 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import AppContext from '../ContextAPI/AppContext'
 
 const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1476928037';
 
@@ -20,6 +21,8 @@ const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-459845983
 const RecentSearches = ({ navigation, route }) => {
 
   const { searches } = route.params;
+
+  const { showAds } = useContext(AppContext);
 
   const [searchesRecent, setSearchesRecent] = useState([...searches]);
 
@@ -102,12 +105,14 @@ const RecentSearches = ({ navigation, route }) => {
           })}
         </View>
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 0 }}>
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
-      </View>
+      {(!showAds || showAds === false) &&
+        <View style={{ position: 'absolute', bottom: 0 }}>
+          <BannerAd
+            unitId={bannerAdUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>
+      }
     </View>
   )
 }

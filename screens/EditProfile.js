@@ -44,7 +44,6 @@ const EditProfile = ({ navigation }) => {
         },
       })
       const data = await response.json();
-      console.log(response.status);
       if (response.status == 200) {
         setUsernameText(<Text style={styles.userNamePrecautionsText}>You can change your username twice every 14 days</Text>)
         setOldUser(data.user);

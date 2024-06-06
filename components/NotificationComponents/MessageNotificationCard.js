@@ -34,12 +34,6 @@ const MessageNotificationCard = ({ data, onPress }) => {
     }
   }
 
-  // Example usage:
-  const milliseconds = Date.now() - (3 * 24 * 60 * 60 * 1000); // 3 days ago
-  console.log(timeAgo(milliseconds)); // Output: 3 days ago
-
-
-
   return (
     <Pressable onPress={onPress} style={styles.NotificationCardButton}>
       <View style={[styles.FolllowRequestUserInfo, (data && data.isRead) && { gap: 0 }]}>
