@@ -278,6 +278,7 @@ const Account = ({ navigation, route }) => {
     }, [CustomUUID])
   );
 
+
   return (
     <View style={styles.Container}>
       {(loading && !CurrentUserData) ?

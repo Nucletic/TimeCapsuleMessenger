@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 SplashScreen.preventAutoHideAsync();
 
 import Constants from 'expo-constants';
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { arrayRemove, collection, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import AppContext from '../ContextAPI/AppContext';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
@@ -31,8 +31,9 @@ const Index = () => {
           if (user.emailVerified) {
             setLoggedIn(true);
             setLoading(false);
-            await updateActivityStatus();
-            checkMember(user.uid)
+            await updateActivityStatus(user.uid);
+            checkMember(user.uid);
+            deleteTimedOutTale(user.uid);
           } else {
             setLoggedIn(false);
             setLoading(false);
@@ -68,17 +69,49 @@ const Index = () => {
   }
 
 
-  const updateActivityStatus = async () => {
-    try {
-      const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const querySnapshot = await getDocs(query(collection(FIREBASE_DB, 'users'), where('userId', '==', CustomUUID)));
 
-      if (!querySnapshot.empty) {
-        const userRef = querySnapshot.docs[0].ref;
-        await updateDoc(userRef, {
+
+  const deleteTimedOutTale = async (uid) => {
+    try {
+      const docRef = doc(FIREBASE_DB, 'users', uid)
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.tale) {
+          const talesToRemove = data.tale.filter(tale => timeOutTimestamp24h(tale.createdAt));
+          for (const tale of talesToRemove) {
+            await updateDoc(docRef, {
+              tale: arrayRemove(tale)
+            });
+            console.log('deleted')
+          }
+        }
+      }
+    } catch (error) {
+      console.log("Error Deleting Outdated Tale", error);
+    }
+  }
+
+  const timeOutTimestamp24h = (timestamp) => {
+    const timestampDate = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+    const now = new Date();
+    const differenceInMillis = now - timestampDate;
+    const differenceInHours = differenceInMillis / (1000 * 60 * 60);
+    return differenceInHours >= 24;
+  };
+
+
+  const updateActivityStatus = async (uid) => {
+    try {
+      const docRef = doc(FIREBASE_DB, 'users', uid)
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        await updateDoc(docRef, {
           activityStatus: 'active',
           lastActive: serverTimestamp(),
         });
+      } else {
+        console.error('Document does not exist');
       }
 
     } catch (error) {
