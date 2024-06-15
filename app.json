@@ -1,27 +1,57 @@
 {
   "expo": {
-    "name": "my-project",
-    "slug": "my-project",
+    "name": "LocBridge",
+    "slug": "LocBridge",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bitcode": false
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "googleServicesFile": "./google-services.json",
+      "package": "com.nucletic.locbridge",
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK"
+      ],
+      "versionCode": 16
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dc6ea0ef-7a61-44ee-8a34-edcdca21cae6"
+      },
+      "SECRET_KEY": "284c83f4dc565aa5170460c44e94de89f79487b2f19a5e72370e7c5d962a9573",
+      "FIREBASE_API_KEY": "AIzaSyD_9-bD_TEWhRdsk8lOpHeYebYAkWUmz1c",
+      "FIREBASE_AUTH_DOMAIN": "timecapsulemessenger.firebaseapp.com",
+      "FIREBASE_PROJECT_ID": "timecapsulemessenger",
+      "FIREBASE_STORAGE_BUCKET": "timecapsulemessenger.appspot.com",
+      "FIREBASE_MESSAGEING_SENDER_ID": "518379961887",
+      "FIREBASE_APP_ID": "1: 518379961887:web:afc184f6aa6a46b298df2a",
+      "FIREBASE_MESUREMENT_ID": "G-DC3RCQPS1"
+    },
+    "scheme": "time",
+    "owner": "nucletic"
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-4598459833894527~7700836865"
   }
 }
