@@ -8,7 +8,7 @@ import { usePushNotifications } from '../usePushNotifications';
 import { doc, getDoc, serverTimestamp, updateDoc, collection, query, where, getDocs, } from 'firebase/firestore';
 import AppContext from '../ContextAPI/AppContext';
 import { encryptData } from '../EncryptData'
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState } from 'react-native';
 
 
 
@@ -16,8 +16,6 @@ SplashScreen.preventAutoHideAsync();
 
 
 import Constants from 'expo-constants';
-import DeviceInfo from 'react-native-device-info';
-import UpdatePopUp from '../components/SmallEssentials/UpdatePopUp';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 const Index = () => {
@@ -26,16 +24,12 @@ const Index = () => {
 
   WebBrowser.maybeCompleteAuthSession();
 
-  const { expoPushToken, notification } = usePushNotifications()
-  const data = JSON.stringify(notification, undefined, 2)
-
+  const { expoPushToken, notification } = usePushNotifications();
 
 
   const [loading, setLoading] = useState(true);
   const [LoggedIn, setLoggedIn] = useState(null);
   const [userUID, setUserUID] = useState(null);
-  const [upToDate, setUpToDate] = useState(null);
-
 
 
   const checkLogin = async () => {
@@ -44,27 +38,27 @@ const Index = () => {
       try {
         if (user) {
           if (user.emailVerified) {
+            setUserUID(user.uid);
             setLoggedIn(true);
-            setLoading(false);
-            saveExpoPushTokenToFirebase(user.uid)
+            saveExpoPushTokenToFirebase(user.uid);
             onlineUserActivityUpdate(user.uid);
             checkMember(user.uid);
             deleteTimedOutTale(user.uid);
-            setUserUID(user.uid);
           } else {
             setLoggedIn(false);
-            setLoading(false);
           }
         } else {
           setLoggedIn(false);
-          setLoading(false);
         }
       } catch (error) {
         console.error('Error during login:', error);
+      } finally {
+        setLoading(false); // Set loading to false after all operations
       }
     });
     return () => unsubscribe();
-  }
+  };
+
 
 
   const checkMember = async (uid) => {
@@ -99,7 +93,7 @@ const Index = () => {
     }
   }
 
-  const deleteTimedOutTale = async (uid) => {
+  const deleteTimedOutTale = async () => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
@@ -140,10 +134,8 @@ const Index = () => {
   }
 
   useEffect(() => {
-    // if (upToDate) {
-      checkLogin();
-    // }
-  }, [expoPushToken]);
+    checkLogin();
+  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -183,42 +175,10 @@ const Index = () => {
   };
 
 
-  useEffect(() => {
-    checkAppUpdate();
-  }, [])
-
-
-  const checkAppUpdate = async () => {
-    try {
-      const docRef = doc(FIREBASE_DB, 'versions', 'dWqsS2bBqCUFCTzu65rl')
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        if (data.version === String(DeviceInfo.getVersion())) {
-          setUpToDate(true);
-        } else {
-          setUpToDate(false);
-
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-
-
-
-
-
 
   return (
     <>
-
-      {upToDate ?
-        (LoggedIn ? <MainNavigation /> : <Registration setLoggedIn={setLoggedIn} />)
-        : (upToDate === false && <UpdatePopUp />)
-      }
+      {LoggedIn ? <MainNavigation /> : <Registration setLoggedIn={setLoggedIn} />}
     </>
   );
 }
