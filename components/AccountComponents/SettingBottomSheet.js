@@ -81,7 +81,7 @@ const SettingBottomSheet = ({ settingSheetOpen, setSettingSheetOpen, setBlockShe
       const senderUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/removeChatmate/${senderUUID}/${CustomUUID}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/removeChatmate/${senderUUID}/${CustomUUID}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {

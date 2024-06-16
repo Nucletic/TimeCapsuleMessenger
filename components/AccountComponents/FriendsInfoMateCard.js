@@ -23,7 +23,7 @@ const FriendsInfoMateCard = ({ username, profileImage, userId, ownCustomUUID, se
       const senderUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/${userId}/ChatmateRequest`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/${userId}/ChatmateRequest`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -52,7 +52,7 @@ const FriendsInfoMateCard = ({ username, profileImage, userId, ownCustomUUID, se
       const userUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/checkFollowing`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/checkFollowing`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -80,7 +80,7 @@ const FriendsInfoMateCard = ({ username, profileImage, userId, ownCustomUUID, se
       const userUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/AddChatContact`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/AddChatContact`, {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -59,7 +59,7 @@ const FriendsInfo = ({ navigation, route }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/getChatmates/${userId}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getChatmates/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

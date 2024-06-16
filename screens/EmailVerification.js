@@ -36,7 +36,7 @@ const EmailVerification = ({ userEmail, setCurrentPage }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       // const response = await fetch('http://10.0.2.2:5000/users/resendVerificationEmail', {
-      const response = await fetch('http://192.168.29.8:5000/users/resendVerificationEmail', {
+      const response = await fetch('https://server-production-3bdc.up.railway.app/users/resendVerificationEmail', {
         method: 'POST',
         credentials: 'include',
         headers: {

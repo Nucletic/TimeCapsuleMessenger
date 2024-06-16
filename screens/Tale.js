@@ -222,7 +222,7 @@ const Tale = ({ route }) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/sendNotification`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/sendNotification`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -375,7 +375,7 @@ const Tale = ({ route }) => {
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/UpdateSeenBy`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/UpdateSeenBy`, {
         method: 'PUT',
         credentials: 'include',
         headers: {

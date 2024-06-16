@@ -325,7 +325,7 @@ const AddTale = ({ navigation, route }) => {
       formData.append('texts', JSON.stringify(Texts));
 
       // const response = await fetch(`http://10.0.2.2:5000/users/AddTale`, {
-      const response = await fetch(`http://192.168.29.8:5000/users/AddTale`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/AddTale`, {
         method: 'POST',
         credentials: 'include',
         headers: {

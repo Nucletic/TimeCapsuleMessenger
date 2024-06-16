@@ -24,7 +24,7 @@ const ForgotPassword = ({ setCurrentPage }) => {
       setLoading(true);
       const encryptedEmail = encryptData('kuntalpriyanshu608@gmail.com', SECRET_KEY);
       // const response = await fetch('http://10.0.2.2:5000/users/forgotPassword', {
-      const response = await fetch('http://192.168.29.8:5000/users/forgotPassword', {
+      const response = await fetch('https://server-production-3bdc.up.railway.app/users/forgotPassword', {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -75,7 +75,7 @@ const EditProfileOnRegister = ({ setLoggedIn }) => {
 
 
 
-        const response = await fetch('http://192.168.29.8:5000/users/update', {
+        const response = await fetch('https://server-production-3bdc.up.railway.app/users/update', {
           method: 'PUT',
           credentials: 'include',
           headers: {

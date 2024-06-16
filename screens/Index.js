@@ -97,7 +97,7 @@ const Index = () => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/deleteTimedOutTale`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/deleteTimedOutTale`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -145,11 +145,10 @@ const Index = () => {
 
 
   useEffect(() => {
-    const handleAppStateChange = (nextAppState) => {
+    const handleAppStateChange = async (nextAppState) => {
       console.log('AppState Change Detected:', nextAppState);
-      if (nextAppState === 'background') {
-        console.log('App is going to the background');
-        offlineUserActivityUpdate(userUID);
+      if (nextAppState === 'background' || nextAppState === 'inactive' || nextAppState === 'unknown') {
+        await offlineUserActivityUpdate(userUID);
       }
     };
 

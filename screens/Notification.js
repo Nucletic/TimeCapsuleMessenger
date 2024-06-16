@@ -43,7 +43,7 @@ const Notification = ({ navigation }) => {
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/${CustomUUID}/getAllNotifications`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/${CustomUUID}/getAllNotifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -92,7 +92,7 @@ const Notification = ({ navigation }) => {
 
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/AcceptChatmateRequest`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/AcceptChatmateRequest`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -126,7 +126,7 @@ const Notification = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       // const response = await fetch(`http://10.0.2.2:5000/users/RejectChatmateRequest`, {
-      const response = await fetch(`http://192.168.29.8:5000/users/RejectChatmateRequest`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/RejectChatmateRequest`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -162,7 +162,7 @@ const Notification = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const response = await fetch(`http://192.168.29.8:5000/users/markNotificationsAsRead/?CustomUUID=${CustomUUID}/notificationId?=${notification.notificationId}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/markNotificationsAsRead/?CustomUUID=${CustomUUID}/notificationId?=${notification.notificationId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -187,7 +187,7 @@ const Notification = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const response = await fetch(`http://192.168.29.8:5000/users/markNotificationsAsRead/${CustomUUID}/${null}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/markNotificationsAsRead/${CustomUUID}/${null}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {

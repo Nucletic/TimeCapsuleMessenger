@@ -167,7 +167,7 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
       const encryptedEmail = encryptData(email, SECRET_KEY);
       const encryptedPassword = encryptData(password, SECRET_KEY);
 
-      const response = await fetch('http://192.168.29.8:5000/users/register', {
+      const response = await fetch('https://server-production-3bdc.up.railway.app/users/register', {
         method: 'POST',
         credentials: 'include',
         headers: {

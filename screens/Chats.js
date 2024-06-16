@@ -91,7 +91,7 @@ const Chats = ({ navigation }) => {
 
   const getChatContacts = async (CustomUUID, encryptedIdToken) => {
     try {
-      const response = await fetch(`http://192.168.29.8:5000/users/getChatContacts/${CustomUUID}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getChatContacts/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -119,7 +119,7 @@ const Chats = ({ navigation }) => {
         const contactCustomUUID = CustomUUID === contact.chatId.split('_')[0]
           ? contact.chatId.split('_')[1] : contact.chatId.split('_')[0];
 
-        const response = await fetch(`http://192.168.29.8:5000/users/getContactDetails/${contactCustomUUID}`, {
+        const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getContactDetails/${contactCustomUUID}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -141,7 +141,7 @@ const Chats = ({ navigation }) => {
 
   const getContactTales = async (CustomUUID, encryptedIdToken) => {
     try {
-      const response = await fetch(`http://192.168.29.8:5000/users/GetTales/:${1}/:${10}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/GetTales/:${1}/:${10}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

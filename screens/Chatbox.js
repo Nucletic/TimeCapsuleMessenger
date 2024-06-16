@@ -237,11 +237,10 @@ const Chatbox = ({ navigation, route }) => {
       await updateDoc(chatRef, {
         lastMessage: newMessage,
       });
-      // if (activityStatus === 'inactive') {
-      // sendMessageNotification();
-      sendMobileNotification('MESSAGE_SENT', message, chatId, username, profileImage, blockedFromOther, blockedFromOur, onlineStatus, lastOnline, ExpoPushToken);
-
-      // }
+      if (activityStatus === 'inactive' || !activityStatus) {
+        sendMessageNotification();
+        sendMobileNotification('MESSAGE_SENT', message, chatId, username, profileImage, blockedFromOther, blockedFromOur, onlineStatus, lastOnline, ExpoPushToken);
+      }
 
       setRecordedURI(null);
       setSoundLevels([]);
@@ -256,7 +255,7 @@ const Chatbox = ({ navigation, route }) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/sendNotification`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/sendNotification`, {
         method: 'POST',
         credentials: 'include',
         headers: {

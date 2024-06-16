@@ -34,7 +34,7 @@ const Search = () => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/getUserRecommendations/${CustomUUID}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getUserRecommendations/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {

@@ -45,7 +45,7 @@ const BlockedAccounts = ({ navigation }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/getBlockedAccounts`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getBlockedAccounts`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -72,7 +72,7 @@ const BlockedAccounts = ({ navigation }) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/unblockUser/${userId}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/unblockUser/${userId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {

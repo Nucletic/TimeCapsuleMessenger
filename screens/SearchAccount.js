@@ -86,7 +86,7 @@ const SearchAccount = ({ navigation }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/getRecentSearches/${CustomUUID}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getRecentSearches/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -114,7 +114,7 @@ const SearchAccount = ({ navigation }) => {
       setSearches([...updatedSearches]);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`http://192.168.29.8:5000/users/removeRecentSearches/${CustomUUID}/${userId}`, {
+      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/removeRecentSearches/${CustomUUID}/${userId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
