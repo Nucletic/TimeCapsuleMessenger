@@ -40,7 +40,6 @@ const Index = () => {
           if (user.emailVerified) {
             setUserUID(user.uid);
             setLoggedIn(true);
-            saveExpoPushTokenToFirebase(user.uid);
             onlineUserActivityUpdate(user.uid);
             checkMember(user.uid);
             deleteTimedOutTale(user.uid);
@@ -58,6 +57,16 @@ const Index = () => {
     });
     return () => unsubscribe();
   };
+
+  useEffect(() => {
+    if (expoPushToken?.data && userUID) {
+      saveExpoPushTokenToFirebase(userUID);
+
+    }
+  }, [expoPushToken, userUID])
+
+
+
 
 
 
