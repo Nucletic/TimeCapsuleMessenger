@@ -88,7 +88,7 @@ const EmailVerification = ({ userEmail, setCurrentPage }) => {
               <Text style={[styles.ResendEmailButtonText, isActive && { color: '#999' }]}>{isActive ? (seconds < 10 ? `00:0${seconds}` : `00:${seconds}`) : 'Resend Email'}</Text>
             </Pressable>
             <Pressable onPress={CheckStatus} style={styles.CheckStatusButton}>
-              <Text style={styles.CheckStatusButtonText}>Check Status</Text>
+              <Text style={styles.CheckStatusButtonText}>Verify</Text>
             </Pressable>
           </View>
           <Text style={styles.ThirdEmailText}>This usually takes less than a minute.</Text>

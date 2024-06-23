@@ -5,7 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebaseConfig';
 import * as SplashScreen from 'expo-splash-screen';
 import { usePushNotifications } from '../usePushNotifications';
-import { doc, getDoc, serverTimestamp, updateDoc, collection, query, where, getDocs, } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, updateDoc, collection, query, where, getDocs, setDoc, arrayUnion, } from 'firebase/firestore';
 import AppContext from '../ContextAPI/AppContext';
 import { encryptData } from '../EncryptData'
 import { AppState } from 'react-native';
@@ -61,9 +61,14 @@ const Index = () => {
   useEffect(() => {
     if (expoPushToken?.data && userUID) {
       saveExpoPushTokenToFirebase(userUID);
-
     }
   }, [expoPushToken, userUID])
+
+  useEffect(() => {
+    if (expoPushToken?.data) {
+      saveExpoPushTokenToFirebaseWithoutUserUID(expoPushToken)
+    }
+  }, [expoPushToken])
 
 
 
@@ -101,6 +106,31 @@ const Index = () => {
       console.log('Error saving expo push token to firebase:', error)
     }
   }
+
+
+  const saveExpoPushTokenToFirebaseWithoutUserUID = async (expoPushToken) => {
+    try {
+      const token = expoPushToken?.data; // Ensure you have the token data ready
+
+      const docRef = doc(FIREBASE_DB, 'ExpoPushTokens', 'Tokens');
+      await setDoc(docRef, {
+        Tokens: arrayUnion(token), // Use arrayUnion to add token if it doesn't exist already
+      }, { merge: true });
+
+      console.log("Expo push token saved successfully");
+    } catch (error) {
+      console.error("Error saving Expo push token:", error);
+    }
+  };
+
+
+
+
+
+
+
+
+
 
   const deleteTimedOutTale = async () => {
     try {
