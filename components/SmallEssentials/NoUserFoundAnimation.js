@@ -19,7 +19,7 @@ const NoUserFoundAnimation = ({ titleText }) => {
           runAnimation = animation
         }} colorFilters={[{
           keypath: 'Comp 1.',
-          color: '#F7706E'
+          color: '#f5efe8'
         }]} style={{
           width: moderateScale(140),
           height: moderateScale(140),

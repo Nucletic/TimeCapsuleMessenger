@@ -46,7 +46,7 @@ const SettingBottomSheet = ({ settingSheetOpen, setSettingSheetOpen, setBlockShe
 
   const HeightAnimationInterpolate = HeightAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: [`-${moderateScale(Height * 0.035)}%`, notInAccountPage ? `-${moderateScale(Height * 0.017)}%` : CustomUUID ? `-${moderateScale(Height * 0.013)}%` : `-${moderateScale(Height * 0.013)}%`],
+    outputRange: [`-${moderateScale(Height * 0.035)}%`, notInAccountPage ? `-${moderateScale(Height * 0.017)}%` : CustomUUID ? `-${moderateScale(Height * 0.012)}%` : `-${moderateScale(Height * 0.012)}%`],
   });
   const OpacityAnimationInterpolate = OpacityAnimation.interpolate({
     inputRange: [0, 1],
@@ -114,7 +114,7 @@ const SettingBottomSheet = ({ settingSheetOpen, setSettingSheetOpen, setBlockShe
                 <Text style={[styles.SettingsButtonText, { color: '#2278FF', }]}>Unblock...</Text>
               </Pressable>
               : <Pressable onPress={() => { setSettingSheetOpen(false); setBlockSheetOpen(true) }} style={styles.SettingsButton}>
-                <Text style={[styles.SettingsButtonText, { color: '#F23051' }]}>Block...</Text>
+                <Text style={[styles.SettingsButtonText, { color: '#A1824A' }]}>Block...</Text>
               </Pressable>}
             {ChatId ?
               <Pressable onPress={() => { setSettingSheetOpen(false) }} style={styles.SettingsButton}>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   SettingsButtonText: {
     fontSize: Height * 0.020,
     fontWeight: '500',
-    color: '#49505B',
+    color: '#1b160b',
   },
   AddAccountButtonText: {
     fontSize: Height * 0.020,

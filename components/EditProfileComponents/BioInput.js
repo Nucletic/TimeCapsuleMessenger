@@ -3,8 +3,14 @@ import React, { useState, useEffect } from 'react'
 import { moderateScale } from 'react-native-size-matters';
 import { Height } from '../../utils';
 
+
 const BioInput = ({ Bio, setBio }) => {
   const [text, setText] = useState(Bio ? Bio : '');
+
+
+  
+
+
 
   useEffect(() => {
     setBio(text);
@@ -29,17 +35,20 @@ const styles = StyleSheet.create({
   InputTitle: {
     color: '#C3C3C3',
     fontSize: Height * 0.016,
+    fontFamily: 'PlusJakartaSans',
+
   },
   MainInput: {
     borderWidth: moderateScale(1.6),
     borderRadius: moderateScale(5),
-    borderColor: '#C3C3C3',
+    borderColor: '#A1824A',
     padding: moderateScale(8),
-    color: '#49505B',
+    color: '#1C170D',
+    fontFamily: 'PlusJakartaSans',
     fontWeight: '500',
   },
   InputLengthText: {
-    color: '#C3C3C3',
+    color: '#A1824A',
     fontSize: Height * 0.014,
     textAlign: 'right',
   },

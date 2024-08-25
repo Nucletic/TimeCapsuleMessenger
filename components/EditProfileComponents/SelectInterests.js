@@ -38,7 +38,7 @@ const SelectInterests = ({ Interests, setInterests }) => {
       <View style={styles.InterestsContainer}>
         {interests.map((item, index) => {
           return (
-            <Pressable onPress={() => { handleSelect(item) }} key={index} style={[styles.Interest, { borderColor: (selected.indexOf(item) !== -1) ? '#49505B' : '#E9E9E9' }]}>
+            <Pressable onPress={() => { handleSelect(item) }} key={index} style={[styles.Interest, { borderColor: (selected.indexOf(item) !== -1) ? '#1C170D' : '#f5efe8' }]}>
               <Text style={styles.InterestText}>{item}</Text>
             </Pressable>
           )
@@ -54,9 +54,8 @@ const styles = StyleSheet.create({
   InputContainer: {
     marginTop: moderateScale(40),
     width: '100%',
-    backgroundColor: '#FBFBFB',
     borderWidth: moderateScale(1),
-    borderColor: '#E9E9E9',
+    borderColor: '#f5efe8',
     padding: moderateScale(10),
     borderRadius: moderateScale(10),
   },
@@ -68,12 +67,7 @@ const styles = StyleSheet.create({
     color: '#9095A0',
     fontSize: Height * 0.016,
     fontWeight: '500',
-  },
-  MainInput: {
-    borderWidth: moderateScale(1.6),
-    borderRadius: moderateScale(5),
-    borderColor: '#C3C3C3',
-    padding: moderateScale(8),
+    fontFamily: 'PlusJakartaSans',
   },
   InterestsContainer: {
     marginTop: moderateScale(8),
@@ -85,14 +79,15 @@ const styles = StyleSheet.create({
   Interest: {
     paddingHorizontal: moderateScale(15),
     paddingVertical: moderateScale(4),
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#f5efe8',
     borderWidth: moderateScale(1.6),
     borderColor: '#E9E9E9',
     borderRadius: moderateScale(25),
   },
   InterestText: {
     fontSize: Height * 0.020,
-    color: '#49505B',
+    color: '#1C170D',
     fontWeight: '500',
+    fontFamily: 'PlusJakartaSans',
   }
 });

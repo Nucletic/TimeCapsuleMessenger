@@ -1,24 +1,18 @@
 import { Pressable, Image, StyleSheet, Text, View, ScrollView, TextInput, Animated } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Height, Width } from '../utils'
+import React, {useEffect, useRef, useState } from 'react'
+import { Height } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
-import { encryptData, decryptData } from '../EncryptData'
+import { encryptData } from '../EncryptData'
 import { FIREBASE_AUTH } from '../firebaseConfig'
+
 
 
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext'
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1975621483';
-
-
 const AccountPrivacy = ({ navigation }) => {
 
-  const { showAds } = useContext(AppContext);
+  
 
   const [privateAccount, setPrivateAccount] = useState(null);
 
@@ -37,6 +31,7 @@ const AccountPrivacy = ({ navigation }) => {
       useNativeDriver: false,
     }).start();
   }
+  
   const stopAnimation = () => {
     Animated.timing(switchAnimation, {
       toValue: 0,
@@ -56,7 +51,7 @@ const AccountPrivacy = ({ navigation }) => {
   })
   const colorAnimationInterpolate = colorAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#c3c3c3', '#2278FF'],
+    outputRange: ['#1C170D', '#A1824A'],
   })
 
   useEffect(() => {
@@ -69,7 +64,7 @@ const AccountPrivacy = ({ navigation }) => {
   const checkAccountPrivacy = async () => {
     const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
     const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-    const response = await fetch(`https://server-production-3bdc.up.railway.app/users/profile`, {
+    const response = await fetch(`http://192.168.29.62:5000/users/profile`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -90,7 +85,7 @@ const AccountPrivacy = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
 
-      const response = await fetch('https://server-production-3bdc.up.railway.app/users/AccountPrivacy', {
+      const response = await fetch('http://192.168.29.62:5000/users/AccountPrivacy', {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -125,7 +120,7 @@ const AccountPrivacy = ({ navigation }) => {
     <View style={styles.Container}>
       <View style={styles.SettingsPrivacyNav}>
         <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <Text style={styles.PageTitle}>Account Privacy</Text>
       </View>
@@ -150,11 +145,6 @@ const AccountPrivacy = ({ navigation }) => {
           </Text>
         </View>
       </ScrollView>
-      {(!showAds || showAds === false) &&
-        <BannerAd
-          unitId={bannerAdUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />}
     </View>
   )
 }
@@ -185,8 +175,9 @@ const styles = StyleSheet.create({
   },
   PageTitle: {
     fontSize: Height * 0.026,
-    color: '#49505B',
+    color: '#1C170D',
     fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
   },
   MainContent: {
     padding: moderateScale(16),
@@ -199,12 +190,14 @@ const styles = StyleSheet.create({
   },
   LocationSwitchTitle: {
     fontSize: Height * 0.020,
-    color: '#49505B',
-    fontWeight: '600',
+    color: '#1C170D',
+    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans',
   },
   LocationPrecautionText: {
     fontSize: Height * 0.014,
-    color: '#C3C3C3',
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
     marginTop: moderateScale(8),
     lineHeight: Height * 0.019,
   },

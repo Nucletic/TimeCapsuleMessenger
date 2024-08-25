@@ -13,6 +13,7 @@ import BlockAccountConfirmation from '../components/AccountComponents/BlockAccou
 
 
 
+
 import Constants from 'expo-constants';
 import ProfileLoaderAnimation from '../components/SmallEssentials/ProfileLoaderAnimation'
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
@@ -21,6 +22,8 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
 const Account = ({ navigation, route }) => {
+
+
 
   const [settingSheetOpen, setSettingSheetOpen] = useState(false);
   const [blockSheetOpen, setBlockSheetOpen] = useState(false);
@@ -43,7 +46,7 @@ const Account = ({ navigation, route }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/profile`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/profile`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -81,7 +84,7 @@ const Account = ({ navigation, route }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/${CustomUUID}/profile`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/${CustomUUID}/profile`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -120,7 +123,7 @@ const Account = ({ navigation, route }) => {
       const senderUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/${CustomUUID}/ChatmateRequest`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/${CustomUUID}/ChatmateRequest`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -147,7 +150,7 @@ const Account = ({ navigation, route }) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/sendNotification`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/sendNotification`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -172,7 +175,7 @@ const Account = ({ navigation, route }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
 
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/checkFollowing`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/checkFollowing`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -199,7 +202,7 @@ const Account = ({ navigation, route }) => {
       const userUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/AddChatContact`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/AddChatContact`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -221,7 +224,7 @@ const Account = ({ navigation, route }) => {
       const currentUserUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/checkMutualFriends/${CustomUUID}/${currentUserUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/checkMutualFriends/${CustomUUID}/${currentUserUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -246,7 +249,7 @@ const Account = ({ navigation, route }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/checkBlockedUser/${CustomUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/checkBlockedUser/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -268,9 +271,10 @@ const Account = ({ navigation, route }) => {
 
   const getUserRecommendation = async () => {
     try {
+      const myCustomUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getUserRecommendations/${CustomUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getUserRecommendations/${myCustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -312,7 +316,7 @@ const Account = ({ navigation, route }) => {
             <View style={styles.AccountNavLeft}>
               {CustomUUID &&
                 <Pressable onPress={() => { navigation.goBack(); }} style={styles.BackButton}>
-                  <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+                  <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
                 </Pressable>}
               <Text style={styles.PageTitle}>{CurrentUserData?.username}</Text>
             </View>
@@ -351,22 +355,24 @@ const Account = ({ navigation, route }) => {
                           userId: CurrentUserData?.userId,
                           mutualFriends: mutualFriends,
                           username: CurrentUserData.username,
+                          name: CurrentUserData.name,
                           profileImage: CurrentUserData.profileImage
                         })
                       }} style={styles.FollowingCommonButton}>
-                        <Image source={require('../assets/Icons/CommonMates.png')} style={styles.FollowingCommonButtonImage} />
-                        <Text style={styles.FollowingButtonsText}>{mutualFriends ? mutualFriends.length : 0}</Text>
+                        <Text style={styles.FollowingButtonsText}>{mutualFriends ? `${mutualFriends.length} mutual friends,` : '0 mutual friends,'}</Text>
                       </Pressable>}
                     <Pressable onPress={() => {
                       navigation.navigate('FriendsInfo', {
                         userId: CurrentUserData?.userId,
                         mutualFriends: mutualFriends,
                         username: CurrentUserData.username,
+                        name: CurrentUserData.name,
                         profileImage: CurrentUserData.profileImage
                       })
                     }} style={styles.FollowingChatmatesButton}>
-                      <Image source={require('../assets/Icons/Chatmates.png')} style={styles.FollowingChatmatesButtonImage} />
-                      <Text style={styles.FollowingButtonsText}>{CurrentUserData?.chatmateCount || 0}</Text>
+                      {CurrentUserData?.chatmateCount ?
+                        <Text style={styles.FollowingButtonsText}>{`${CurrentUserData?.chatmateCount} friends`}</Text>
+                        : <Text style={styles.FollowingButtonsText}>0 friends</Text>}
                     </Pressable>
                   </View>}
 
@@ -468,8 +474,9 @@ const styles = StyleSheet.create({
   },
   PageTitle: {
     fontSize: Height * 0.026,
-    color: '#49505B',
+    color: '#1C170D',
     fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
   },
   SettingsButton: {
     height: moderateScale(30),
@@ -502,24 +509,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: moderateScale(10),
-    gap: moderateScale(10),
+    gap: moderateScale(6),
   },
   ProfileDetailsName: {
     fontSize: Height * 0.026,
-    color: '#2F3237',
+    color: '#1C170D',
     fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
   },
   ProfileDetailsBio: {
-    fontSize: Height * 0.014,
+    fontSize: Height * 0.016,
     textAlign: 'center',
     width: '85%',
-    color: '#49505B',
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
+
   },
   ProfileFollowingInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: moderateScale(21),
+    gap: moderateScale(4),
   },
   FollowingCommonButton: {
     flexDirection: 'row',
@@ -554,6 +564,7 @@ const styles = StyleSheet.create({
   FollowingButtonsText: {
     fontSize: Height * 0.018,
     color: '#9095A0',
+    fontFamily: 'PlusJakartaSans',
   },
   AddMateOptionsContainer: {
     flexDirection: 'row',
@@ -565,7 +576,7 @@ const styles = StyleSheet.create({
   AddChatMateButton: {
     height: moderateScale(42),
     paddingHorizontal: moderateScale(24),
-    backgroundColor: '#F7706E',
+    backgroundColor: '#A1824A',
     borderRadius: moderateScale(100),
     flexDirection: 'row',
     alignItems: 'center',
@@ -580,6 +591,7 @@ const styles = StyleSheet.create({
     fontSize: Height * 0.020,
     fontWeight: '600',
     color: '#fff',
+    fontFamily: 'PlusJakartaSans',
   },
   RequestedButton: {
     height: moderateScale(42),
@@ -591,12 +603,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: moderateScale(12),
     borderWidth: moderateScale(2),
-    borderColor: '#F7706E',
+    borderColor: '#A1824A',
   },
   RequestedButtonText: {
     fontSize: Height * 0.020,
     fontWeight: '600',
-    color: '#F7706E',
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   VideoCallButton: {
     height: moderateScale(42),
@@ -604,7 +617,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: moderateScale(100),
-    backgroundColor: '#F7706E',
+    backgroundColor: '#A1824A',
   },
   VideoCallButtonImage: {
     height: moderateScale(20),
@@ -616,7 +629,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: moderateScale(100),
-    backgroundColor: '#F7706E',
+    backgroundColor: '#A1824A',
   },
   CallButtonImage: {
     height: moderateScale(20),
@@ -624,9 +637,9 @@ const styles = StyleSheet.create({
   },
   ProfileInterestsContainer: {
     marginTop: moderateScale(16),
-    backgroundColor: '#FBFBFB',
+    // backgroundColor: '#FBFBFB',
     borderWidth: moderateScale(1),
-    borderColor: '#E9E9E9',
+    borderColor: '#f5efe8',
     padding: moderateScale(10),
     borderRadius: moderateScale(10),
     marginHorizontal: moderateScale(16),
@@ -638,7 +651,8 @@ const styles = StyleSheet.create({
   ProfileInterestsTitle: {
     color: '#9095A0',
     fontSize: Height * 0.016,
-    fontWeight: '500',
+    fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
   },
   MainInput: {
     borderWidth: moderateScale(1.6),
@@ -656,15 +670,15 @@ const styles = StyleSheet.create({
   MainProfileInterest: {
     paddingHorizontal: moderateScale(15),
     paddingVertical: moderateScale(4),
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#f5efe8',
     borderWidth: moderateScale(1.6),
-    borderColor: '#E9E9E9',
+    borderColor: '#A1824A',
     borderRadius: moderateScale(25),
   },
   MainProfileInterestText: {
     fontSize: Height * 0.020,
-    color: '#49505B',
-    fontWeight: '500',
+    color: '#1C170D',
+    fontFamily: 'PlusJakartaSans',
   },
   RecommendedUsersContainer: {
     paddingTop: moderateScale(30),

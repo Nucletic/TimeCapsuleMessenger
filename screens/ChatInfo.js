@@ -10,11 +10,6 @@ import LoaderAnimation from '../components/SmallEssentials/LoaderAnimation'
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext'
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1715681311';
-
 const ChatInfo = ({ navigation, route }) => {
 
   const { chatId, username, profileImage } = route.params;
@@ -27,14 +22,11 @@ const ChatInfo = ({ navigation, route }) => {
     setCustomUUID(CustomUUID);
   });
 
-  const { showAds } = useContext(AppContext);
-
   const getSharedMedia = async () => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      // const response = await fetch(`http://10.0.2.2:5000/users/getChatSharedMedia/${chatId}`, {
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getChatSharedMedia/${chatId}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getChatSharedMedia/${chatId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -56,7 +48,7 @@ const ChatInfo = ({ navigation, route }) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/checkMutedUser/${CustomUUID === chatId.split('_')[0] ? chatId.split('_')[1] : chatId.split('_')[0]}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/checkMutedUser/${CustomUUID === chatId.split('_')[0] ? chatId.split('_')[1] : chatId.split('_')[0]}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -79,7 +71,7 @@ const ChatInfo = ({ navigation, route }) => {
       setUserMuted(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/Mute/${CustomUUID === chatId.split('_')[0] ? chatId.split('_')[1] : chatId.split('_')[0]}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/Mute/${CustomUUID === chatId.split('_')[0] ? chatId.split('_')[1] : chatId.split('_')[0]}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -103,7 +95,7 @@ const ChatInfo = ({ navigation, route }) => {
       setUserMuted(false);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/unMuteUser/${CustomUUID === chatId.split('_')[0] ? chatId.split('_')[1] : chatId.split('_')[0]}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/unMuteUser/${CustomUUID === chatId.split('_')[0] ? chatId.split('_')[1] : chatId.split('_')[0]}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -145,7 +137,7 @@ const ChatInfo = ({ navigation, route }) => {
         </View>) : <>
           <ScrollView style={styles.MainContent}>
             <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-              <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+              <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
             </Pressable>
             <View style={styles.ChatOptions}>
               <View style={styles.ProfileDetails}>
@@ -191,13 +183,6 @@ const ChatInfo = ({ navigation, route }) => {
             </View>
           </ScrollView>
         </>}
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }

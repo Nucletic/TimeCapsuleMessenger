@@ -22,6 +22,7 @@ import EditProfileOnRegister from '../screens/EditProfileOnRegister';
 import OwnTale from '../screens/OwnTale';
 import ImageShow from '../screens/ImageShow';
 import Subscribe from '../screens/Subscribe';
+import Games from '../screens/Games';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +58,14 @@ export const SearchStack = () => {
       <Stack.Screen name='RecentSearches' component={RecentSearches} />
       <Stack.Screen name='Account' component={Account} />
       <Stack.Screen name='FriendsInfo' options={{ animation: 'fade_from_bottom' }} component={FriendsInfo} />
+    </Stack.Navigator>
+  )
+}
+
+export const GamesStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={'Games'}>
+      <Stack.Screen name='Games' component={Games} />
     </Stack.Navigator>
   )
 }

@@ -3,15 +3,19 @@ import React, { useEffect, useState } from 'react'
 import { moderateScale } from 'react-native-size-matters'
 import { Height, Width } from '../../utils'
 import { useNavigation } from '@react-navigation/native'
-import { FIREBASE_AUTH } from '../../firebaseConfig'
-import { encryptData, decryptData } from '../../EncryptData'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+
+
+
 
 
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 const ChatCard = ({ username, profileImage, activityStatus, lastMessage, timestamp, readStatus, chatId, blockedFromOtherSide, blockedFromOurSide, lastActive, ExpoPushToken }) => {
+
+  
+
+
 
   const navigation = useNavigation();
 
@@ -55,7 +59,7 @@ const ChatCard = ({ username, profileImage, activityStatus, lastMessage, timesta
       : 'You Started a Conversation';
 
     return (
-      <Text style={[styles.MessageText, { color: readStatus === 'unread' ? '#323842' : '#c3c3c3' }]}>
+      <Text style={[styles.MessageText, { fontWeight: readStatus === 'unread' ? '500' : '500' }]}>
         {messageContent}
       </Text>
     )
@@ -73,23 +77,24 @@ const ChatCard = ({ username, profileImage, activityStatus, lastMessage, timesta
         <>
           <View style={styles.ChatPictureContainer}>
             {profileImage && <Image source={{ uri: profileImage }} style={styles.ChatPicture} />}
+            <Image source={require('../../assets/Images/peterparker.jpg')} style={styles.ChatPicture} />
             {(!blockedFromOtherSide && !blockedFromOurSide) && (activityStatus === 'active' && <View style={styles.ActivityIndicator} />)}
+            <View style={styles.ActivityIndicator} />
           </View>
           <View style={styles.ChatInfo}>
             <View style={styles.NameContainer}>
               <Text style={styles.NameText}>{username && username}</Text>
-              <View style={[styles.MessageIndicator, { backgroundColor: readStatus === 'unread' ? '#F7706E' : '#fff' }]} />
+              <View style={[styles.MessageIndicator, { backgroundColor: readStatus === 'unread' ? '#029861' : '#fff' }]} />
             </View>
             <View style={styles.MessageInfo}>
-              {blockedFromOtherSide ? <Text style={[styles.MessageText, { color: readStatus === 'unread' ? '#323842' : '#c3c3c3' }]}>
+              {blockedFromOtherSide ? <Text style={[styles.MessageText, { fontWeight: readStatus === 'unread' ? '500' : '500' }]}>
                 You are Blocked By {username}
-              </Text> : blockedFromOurSide ? <Text style={[styles.MessageText, { color: readStatus === 'unread' ? '#323842' : '#c3c3c3' }]}>
+              </Text> : blockedFromOurSide ? <Text style={[styles.MessageText, { fontWeight: readStatus === 'unread' ? '500' : '500' }]}>
                 You Blocked {username}
               </Text> :
                 (lastMessage && renderLastMessageText())}
               <Text style={styles.MessageDateText}>
-                {formatFirebaseTimestamp(timestamp) === 0 ?
-                  'Just Now' : formatFirebaseTimestamp(timestamp)}
+                {formatFirebaseTimestamp(timestamp) === 0 ? 'Just Now' : formatFirebaseTimestamp(timestamp)}
               </Text>
             </View>
           </View>
@@ -108,8 +113,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   ChatPictureContainer: {
-    height: moderateScale(50),
-    width: moderateScale(50),
+    height: moderateScale(55),
+    width: moderateScale(55),
   },
   ChatPicture: {
     height: '100%',
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
     left: '68%',
   },
   ChatInfo: {
-    width: Width - moderateScale(32) - moderateScale(50) - moderateScale(10),
+    width: Width - moderateScale(32) - moderateScale(55) - moderateScale(10),
     gap: 2,
   },
   NameContainer: {
@@ -137,14 +142,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   NameText: {
-    color: '#2F3237',
+    color: '#1b160b',
     fontSize: Height * 0.020,
+    fontFamily: 'PlusJakartaSans',
     fontWeight: '700',
   },
   MessageIndicator: {
-    height: moderateScale(8),
-    width: moderateScale(8),
-    backgroundColor: '#F7706E',
+    height: moderateScale(12),
+    width: moderateScale(12),
     borderRadius: moderateScale(50),
   },
   MessageInfo: {
@@ -154,13 +159,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   MessageText: {
-    color: '#323842',
-    fontSize: Height * 0.015,
-    fontWeight: '500',
+    color: '#A3814A',
+    fontSize: Height * 0.018,
+    fontFamily: 'PlusJakartaSans',
   },
   MessageDateText: {
-    color: '#C3C3C3',
-    fontSize: Height * 0.015,
-    fontWeight: '500',
+    color: '#A3814A',
+    fontSize: Height * 0.018,
+    fontFamily: 'PlusJakartaSans',
   },
 });

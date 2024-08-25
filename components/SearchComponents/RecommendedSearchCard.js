@@ -1,19 +1,32 @@
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { moderateScale } from 'react-native-size-matters'
 import { Height, Width } from '../../utils'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const RecommendedSearchCard = ({ userId, profileImage, username }) => {
 
   const navigation = useNavigation();
+  const [CustomUUID, setCustomUUID] = useState(null);
+
+  AsyncStorage.getItem('CustomUUID').then(CustomUUID => {
+    setCustomUUID(CustomUUID);
+  })
 
 
   return (
-    <Pressable onPress={() => { navigation.navigate('Account', { CustomUUID: userId }); }} style={styles.RecommendedSearchCard}>
+    <Pressable onPress={() => {
+      if (CustomUUID === userId) {
+        navigation.navigate('AccountStack', { screen: 'Account' })
+      } else {
+        navigation.navigate('SearchStack', { screen: 'Account', params: { CustomUUID: userId } })
+      }
+    }} style={styles.RecommendedSearchCard}>
       <View style={styles.ProfileImageContainer}>
-        <Image source={{ uri: profileImage }} style={styles.ProfileImage} />
-        {/* <View style={styles.ProfileActivityIndicator} /> */}
+        {profileImage ?
+          <Image source={{ uri: profileImage }} style={styles.ProfileImage} />
+          : <Image source={require('../../assets/Images/User.png')} style={styles.ProfileImage} />}
       </View>
       <Text style={styles.ProfileName}>{username}</Text>
     </Pressable>
@@ -49,8 +62,9 @@ const styles = StyleSheet.create({
     left: '75%',
   },
   ProfileName: {
-    fontSize: Height * 0.015,
-    color: '#9095A0',
-    fontWeight: '600',
+    fontSize: Height * 0.016,
+    fontWeight: '700',
+    color: '#1b160b',
+    fontFamily: 'PlusJakartaSans',
   },
 });

@@ -12,10 +12,14 @@ import * as ImagePicker from 'expo-image-picker'
 import ConfirmationPrompt from '../components/SmallEssentials/ConfirmationPrompt'
 
 
+
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 const EditProfile = ({ navigation }) => {
+
+  
+
 
   const [bio, setBio] = useState('');
   const [Interests, setInterests] = useState('');
@@ -34,7 +38,7 @@ const EditProfile = ({ navigation }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/profile`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/profile`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -117,7 +121,7 @@ const EditProfile = ({ navigation }) => {
         const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
         const encryptedIdToken = encryptData(idToken, SECRET_KEY);
 
-        const response = await fetch(`https://server-production-3bdc.up.railway.app/users/editProfile`, {
+        const response = await fetch(`http://192.168.29.62:5000/users/editProfile`, {
           method: 'PUT',
           credentials: 'include',
           headers: {
@@ -197,7 +201,7 @@ const EditProfile = ({ navigation }) => {
       <View style={styles.SettingsPrivacyNav}>
         <View style={styles.SettingsPrivacyNavLeft}>
           <Pressable onPress={() => { Keyboard.dismiss(); checkChangesMade() }} style={styles.BackButton}>
-            <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+            <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
           </Pressable>
           <Text style={styles.PageTitle}>Edit Profile</Text>
         </View>
@@ -290,13 +294,14 @@ const styles = StyleSheet.create({
   },
   PageTitle: {
     fontSize: Height * 0.026,
-    color: '#49505B',
+    color: '#1C170D',
     fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
   },
   EditProfileSaveText: {
     fontSize: Height * 0.020,
-    color: '#F7706E',
-    fontWeight: '500',
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   MainContent: {
     width: '100%',
@@ -358,12 +363,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   userNameInputTitle: {
-    color: '#C3C3C3',
+    color: '#A1824A',
     fontSize: Height * 0.016,
+    fontFamily: 'PlusJakartaSans',
   },
   userNameInput: {
     borderBottomWidth: moderateScale(1),
-    borderBottomColor: '#C3C3C3',
+    borderBottomColor: '#A1824A',
     padding: 0,
     paddingHorizontal: moderateScale(5),
   },
@@ -374,7 +380,8 @@ const styles = StyleSheet.create({
   },
   userNamePrecautionsText: {
     fontSize: Height * 0.014,
-    color: '#C3C3C3',
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   LoadingContainer: {
     height: 0.82 * Height,

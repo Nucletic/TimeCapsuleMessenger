@@ -1,11 +1,10 @@
 import { ImageBackground, Keyboard, KeyboardAvoidingView, StyleSheet, Text, View, Pressable } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Height, Width } from '../utils';
 import { moderateScale } from 'react-native-size-matters';
 import Input from '../components/RegistrationComponents/Input';
 import PasswordInput from '../components/RegistrationComponents/PasswordInput';
 import SubmitButton from '../components/RegistrationComponents/SubmitButton';
-import GoogleRegistrationButton from '../components/RegistrationComponents/GoogleRegistrationButton';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
@@ -15,7 +14,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
+
 const Login = ({ setCurrentPage, setLoggedIn }) => {
+
   const [data, setData] = useState({ email: null, phone: null, password: null });
   const [loading, setLoading] = useState(false);
   const [correct, setCorrect] = useState({
@@ -138,12 +139,6 @@ const Login = ({ setCurrentPage, setLoggedIn }) => {
             </View>
             <SubmitButton loading={loading} onPress={() => { validateData() }} underOnPress={() => { setCurrentPage('SIGNUP') }} title={'Log in'}
               titleTwo={'Don\'t have an account?'} ButtonText={'Sign Up'} />
-            {/* <View style={styles.OrView}>
-              <View style={styles.OrViewLeft} />
-              <Text style={styles.OrViewText}>OR</Text>
-              <View style={styles.OrViewRight} />
-            </View> */}
-            {/* <GoogleRegistrationButton onPress={() => { }} title={'Log in with Google'} /> */}
           </View>
         </ImageBackground>
       </KeyboardAvoidingView>
@@ -155,7 +150,7 @@ export default Login;
 
 const styles = StyleSheet.create({
   Registration: {
-    height: Height,
+    height: Height - moderateScale(110),
     width: Width,
     justifyContent: 'center',
     alignItems: 'center',

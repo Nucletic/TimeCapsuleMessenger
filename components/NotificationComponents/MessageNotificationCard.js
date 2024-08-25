@@ -4,7 +4,10 @@ import { moderateScale } from 'react-native-size-matters'
 import { Height, Width } from '../../utils'
 
 
+
 const MessageNotificationCard = ({ data, onPress }) => {
+
+  
 
 
   function timeAgo(milliseconds) {
@@ -38,20 +41,22 @@ const MessageNotificationCard = ({ data, onPress }) => {
     <Pressable onPress={onPress} style={styles.NotificationCardButton}>
       <View style={[styles.FolllowRequestUserInfo, (data && data.isRead) && { gap: 0 }]}>
         <View style={styles.NotificationCardButtonLeft}>
-          <Image source={{ uri: data.profileImage }} style={styles.NotificationUserImage} />
+          {(data && data.profileImage) ? <Image source={{ uri: data.profileImage }} style={styles.NotificationUserImage} />
+            : <Image source={require('../../assets/Images/user3.jpg')} style={styles.NotificationUserImage} />}
           <View style={styles.NotificationUserDetails}>
-            <Text style={styles.NotificationUserDetailsOne}>
-              {`${data && data.senderName} `}
-              <Text style={styles.NotificationUserDetailsTwo}>
-                sent you {`${data && (data.messageCount > 9 ? '9+' : data.messageCount)}`} messages
+            <View style={styles.NameAndTimeContainer}>
+              <Text style={styles.NotificationUserDetailsOne}>
+                {`${data && data.senderName} `}
               </Text>
+              <View style={styles.NotificationCardButtonRight}>
+                <Text style={styles.unreadNotificationTimeText}>{data && timeAgo(data.timestamp)}</Text>
+                {(data && data.pending) && <View style={styles.unreadNotificationIndicator} />}
+              </View>
+            </View>
+            <Text style={styles.NotificationUserDetailsTwo}>
+              sent you {`${data && (data.messageCount > 9 ? '9+' : data.messageCount)}`} messages
             </Text>
           </View>
-        </View>
-        <View style={styles.NotificationCardButtonRight}>
-          <Text style={styles.unreadNotificationTimeText}>{data.timestamp && timeAgo(data.timestamp)}</Text>
-          {data && !data.isRead &&
-            <View style={styles.unreadNotificationIndicator} />}
         </View>
       </View>
     </Pressable>
@@ -65,11 +70,10 @@ const styles = StyleSheet.create({
   NotificationCardButton: {
     paddingHorizontal: moderateScale(16),
     paddingVertical: moderateScale(10),
-    backgroundColor: '#F0F7FF',
+    // backgroundColor: '#F0F7FF',
   },
   FolllowRequestUserInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
     gap: moderateScale(-18),
   },
@@ -78,24 +82,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   NotificationUserDetails: {
-    flexDirection: 'row',
     marginLeft: moderateScale(8),
-    width: '70%',
+    width: '83%',
+  },
+  NameAndTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   NotificationUserDetailsOne: {
-    color: '#2F3237',
-    fontSize: Height * 0.017,
+    color: '#1C170D',
+    fontSize: Height * 0.02,
     fontWeight: '800',
+    fontFamily: 'PlusJakartaSans',
   },
   NotificationUserDetailsTwo: {
-    color: '#2F3237',
-    fontSize: Height * 0.017,
+    color: '#A1824A',
+    fontSize: Height * 0.018,
+    fontFamily: 'PlusJakartaSans',
     fontWeight: '400',
     lineHeight: Height * 0.023,
   },
   NotificationUserImage: {
-    height: moderateScale(40),
-    width: moderateScale(40),
+    height: moderateScale(50),
+    width: moderateScale(50),
     borderRadius: moderateScale(100),
   },
   NotificationCardButtonRight: {
@@ -105,15 +115,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   unreadNotificationTimeText: {
-    fontSize: Height * 0.017,
-    color: '#9095A0',
-    textAlign: 'center',
-    width: moderateScale(50),
+    fontSize: Height * 0.018,
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   unreadNotificationIndicator: {
     height: moderateScale(10),
     width: moderateScale(10),
     borderRadius: moderateScale(100),
-    backgroundColor: '#F7706E',
+    backgroundColor: '#029861',
   },
 });

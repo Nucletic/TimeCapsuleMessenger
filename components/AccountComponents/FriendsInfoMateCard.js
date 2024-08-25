@@ -8,14 +8,16 @@ import { encryptData, decryptData } from '../../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
+
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-const FriendsInfoMateCard = ({ username, profileImage, userId, ownCustomUUID, setLevel }) => {
+const FriendsInfoMateCard = ({ username, name, profileImage, userId, ownCustomUUID, setLevel }) => {
 
   const navigation = useNavigation();
   const [requested, setRequested] = useState(false);
   const [isFollowing, setIsFollowing] = useState(null);
+
 
   const addChatmate = async () => {
     try {
@@ -125,18 +127,21 @@ const FriendsInfoMateCard = ({ username, profileImage, userId, ownCustomUUID, se
         }} style={styles.FriendsInfoMateCard}>
           <View style={styles.FriendsInfoMateCardLeft}>
             {profileImage && <Image source={{ uri: profileImage }} style={styles.FriendsInfoMateCardImage} />}
-            <Text style={styles.FriendsInfoMateCardText}>{username && username}</Text>
+            <View style={styles.NameContainer}>
+              <Text style={styles.FriendsInfoMateCardText}>{name && name}</Text>
+              <Text style={styles.FriendsInfoMateCardText2}>@{username && username}</Text>
+            </View>
           </View>
           <View style={styles.FriendsInfoMateCardRight}>
             {(ownCustomUUID !== userId) &&
               <Pressable onPress={() => { onMatePress() }} style={[styles.AddMateButton, (requested || isFollowing) && {
                 backgroundColor: '#fff',
                 borderWidth: moderateScale(2),
-                borderColor: '#F7706E',
+                borderColor: '#f5efe8',
               }]}>
 
-                {requested && <Text style={[styles.AddMateButtonText, { color: '#F7706E' }]}>Requested</Text>}
-                {isFollowing && <Text style={[styles.AddMateButtonText, { color: '#F7706E' }]}>Message</Text>}
+                {requested && <Text style={[styles.AddMateButtonText, { color: '#A1824A' }]}>Requested</Text>}
+                {isFollowing && <Text style={[styles.AddMateButtonText, { color: '#A1824A' }]}>Message</Text>}
                 {(!requested && !isFollowing) && <Text style={styles.AddMateButtonText}>Add Chatmate</Text>}
               </Pressable>}
           </View>
@@ -154,32 +159,40 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   FriendsInfoMateCardImage: {
-    height: moderateScale(45),
-    width: moderateScale(45),
+    height: moderateScale(55),
+    width: moderateScale(55),
     borderRadius: moderateScale(100),
   },
   FriendsInfoMateCardLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: moderateScale(8),
+    gap: moderateScale(12),
   },
+  NameContainer: {},
   FriendsInfoMateCardText: {
+    fontSize: Height * 0.019,
+    fontWeight: '700',
+    color: '#1C170D',
+    fontFamily: 'PlusJakartaSans',
+  },
+  FriendsInfoMateCardText2: {
     fontSize: Height * 0.017,
-    fontWeight: '900',
-    color: '#2F3237',
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   AddMateButton: {
-    backgroundColor: '#F7706E',
-    width: moderateScale(100),
+    backgroundColor: '#f5efe8',
+    width: moderateScale(130),
     height: moderateScale(32),
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: moderateScale(8),
+    borderRadius: moderateScale(30),
   },
   AddMateButtonText: {
-    fontSize: Height * 0.015,
+    fontSize: Height * 0.018,
     fontWeight: '700',
-    color: '#fff',
+    color: '#1b160b',
+    fontFamily: 'PlusJakartaSans',
   },
 });

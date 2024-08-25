@@ -7,6 +7,8 @@ import { FIREBASE_AUTH } from '../../firebaseConfig'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { encryptData, decryptData } from '../../EncryptData'
 
+
+
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
@@ -14,6 +16,9 @@ const BlockAccountConfirmation = ({ blockSheetOpen, setBlockSheetOpen, CustomUUI
   const navigation = useNavigation();
   const HeightAnimation = useRef(new Animated.Value(0)).current;
   const OpacityAnimation = useRef(new Animated.Value(0)).current;
+
+  
+
 
   const startAnimation = () => {
     Animated.timing(HeightAnimation, {
@@ -117,7 +122,7 @@ const BlockAccountConfirmation = ({ blockSheetOpen, setBlockSheetOpen, CustomUUI
           {unBlockUser ?
             <>
               <Text style={styles.BlockTitle}>Unblock {username && username}?</Text>
-              <Text style={styles.BlockSmallDesc}>This will also block- any other accounts they may have or create in the future.</Text>
+              <Text style={styles.BlockSmallDesc}>This will unblock there current account.</Text>
             </>
             : <>
               <Text style={styles.BlockTitle}>Block {username && username}?</Text>
@@ -205,23 +210,25 @@ const styles = StyleSheet.create({
   BlockTitle: {
     fontWeight: '700',
     fontSize: Height * 0.024,
-    color: '#2F3237',
+    color: '#1b160b',
     marginBottom: moderateScale(8),
+    fontFamily: 'PlusJakartaSans',
+
   },
   BlockSmallDesc: {
     fontSize: Height * 0.016,
     color: '#9095A0',
     textAlign: 'center',
     lineHeight: moderateScale(18),
+    fontFamily: 'PlusJakartaSans',
   },
   BlockingPointsMainView: {
     gap: moderateScale(16),
-    paddingHorizontal: moderateScale(30),
+    paddingHorizontal: moderateScale(20),
   },
   BlockingPointView: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: moderateScale(8),
   },
   BlockingPointIconView: {
     height: moderateScale(28),
@@ -235,9 +242,10 @@ const styles = StyleSheet.create({
   },
   BlockingPointText: {
     fontSize: Height * 0.016,
-    fontWeight: '500',
-    color: '#2F3237',
-    lineHeight: moderateScale(16),
+    fontWeight: '600',
+    color: '#1b160b',
+    marginLeft: moderateScale(4),
+    fontFamily: 'PlusJakartaSans',
   },
   BlockButtonView: {
     borderTopWidth: moderateScale(1),
@@ -245,7 +253,7 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(12),
   },
   BlockButton: {
-    backgroundColor: '#F7706E',
+    backgroundColor: '#a3814a',
     width: Width - moderateScale(40),
     height: moderateScale(45),
     alignItems: 'center',

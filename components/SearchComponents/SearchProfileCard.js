@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 import { FIREBASE_AUTH } from '../../firebaseConfig'
 import { encryptData, decryptData } from '../../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFonts } from 'expo-font'
 
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
@@ -14,6 +15,10 @@ const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 const SearchProfileCard = ({ data, crossButton, removeSearch }) => {
 
   const navigation = useNavigation();
+
+  
+
+
 
   const addRecentSearch = async () => {
     try {
@@ -66,8 +71,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   SearchProfileCardButtonImage: {
-    height: moderateScale(45),
-    width: moderateScale(45),
+    height: moderateScale(55),
+    width: moderateScale(55),
     borderRadius: moderateScale(100),
   },
   SearchProfileCardButtonLeft: {
@@ -77,14 +82,15 @@ const styles = StyleSheet.create({
     gap: moderateScale(10),
   },
   SearchProfileDetailsTextOne: {
-    color: '#2F3237',
-    fontSize: Height * 0.016,
-    fontWeight: '500',
+    color: '#1b160b',
+    fontSize: Height * 0.020,
+    fontFamily: 'PlusJakartaSans',
+    fontWeight: '700',
   },
   SearchProfileDetailsTextTwo: {
     color: '#9095A0',
-    fontSize: Height * 0.016,
-    fontWeight: '500',
+    fontSize: Height * 0.018,
+    fontFamily: 'PlusJakartaSans',
   },
   SearchProfileCardButtonRight: {
     height: moderateScale(20),

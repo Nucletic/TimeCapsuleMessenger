@@ -3,7 +3,13 @@ import React from 'react'
 import { moderateScale } from 'react-native-size-matters'
 import { Height, Width } from '../../utils'
 
+
+
+
 const FollowRequestComponenet = ({ data, onAccept, onReject }) => {
+
+  
+
 
   function timeAgo(timestamp) {
     const seconds = timestamp._seconds;
@@ -45,19 +51,23 @@ const FollowRequestComponenet = ({ data, onAccept, onReject }) => {
     <Pressable style={styles.NotificationCardButton}>
       <View style={styles.FolllowRequestUserInfo}>
         <View style={styles.NotificationCardButtonLeft}>
-          <Image source={require('../../assets/Images/user3.jpg')} style={styles.NotificationUserImage} />
+          {(data && data.profileImage) ? <Image source={{ uri: data.profileImage }} style={styles.NotificationUserImage} />
+            : <Image source={require('../../assets/Images/user3.jpg')} style={styles.NotificationUserImage} />}
           <View style={styles.NotificationUserDetails}>
-            <Text style={styles.NotificationUserDetailsOne}>
-              {`${data && data.senderName} `}
-              <Text style={styles.NotificationUserDetailsTwo}>
-                wants to be your Chat Mate ?
+            <View style={styles.NameAndTimeContainer}>
+              <Text style={styles.NotificationUserDetailsOne}>
+                {`${data && data.senderName} `}
               </Text>
+              <View style={styles.NotificationCardButtonRight}>
+                <Text style={styles.unreadNotificationTimeText}>{data && timeAgo(data.timestamp)}</Text>
+                <Text style={styles.unreadNotificationTimeText}>{'10m ago'}</Text>
+                {(data && data.pending) && <View style={styles.unreadNotificationIndicator} />}
+              </View>
+            </View>
+            <Text style={styles.NotificationUserDetailsTwo}>
+              wants to be your Chat Mate ?
             </Text>
           </View>
-        </View>
-        <View style={styles.NotificationCardButtonRight}>
-          <Text style={styles.unreadNotificationTimeText}>{data && timeAgo(data.timestamp)}</Text>
-          <View style={styles.unreadNotificationIndicator} />
         </View>
       </View>
       <View style={styles.FollowRequestButtons}>
@@ -78,11 +88,10 @@ const styles = StyleSheet.create({
   NotificationCardButton: {
     paddingHorizontal: moderateScale(16),
     paddingVertical: moderateScale(10),
-    backgroundColor: '#F0F7FF',
+    // backgroundColor: '#F0F7FF',
   },
   FolllowRequestUserInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
     gap: moderateScale(-18),
   },
@@ -91,24 +100,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   NotificationUserDetails: {
-    flexDirection: 'row',
     marginLeft: moderateScale(8),
-    width: '70%',
+    width: '83%',
+  },
+  NameAndTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   NotificationUserDetailsOne: {
-    color: '#2F3237',
-    fontSize: Height * 0.017,
+    color: '#1C170D',
+    fontSize: Height * 0.02,
     fontWeight: '800',
+    fontFamily: 'PlusJakartaSans',
   },
   NotificationUserDetailsTwo: {
-    color: '#2F3237',
-    fontSize: Height * 0.017,
+    color: '#A1824A',
+    fontSize: Height * 0.018,
+    fontFamily: 'PlusJakartaSans',
     fontWeight: '400',
     lineHeight: Height * 0.023,
   },
   NotificationUserImage: {
-    height: moderateScale(40),
-    width: moderateScale(40),
+    height: moderateScale(50),
+    width: moderateScale(50),
     borderRadius: moderateScale(100),
   },
   NotificationCardButtonRight: {
@@ -118,14 +133,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   unreadNotificationTimeText: {
-    fontSize: Height * 0.017,
-    color: '#9095A0',
+    fontSize: Height * 0.018,
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   unreadNotificationIndicator: {
     height: moderateScale(10),
     width: moderateScale(10),
     borderRadius: moderateScale(100),
-    backgroundColor: '#F7706E',
+    backgroundColor: '#029861',
   },
   FollowRequestButtons: {
     marginTop: moderateScale(10),
@@ -134,29 +150,31 @@ const styles = StyleSheet.create({
     gap: moderateScale(12),
   },
   AcceptButton: {
-    backgroundColor: '#F7706E',
+    backgroundColor: '#A1824A',
     height: moderateScale(30),
-    width: moderateScale(80),
-    borderRadius: moderateScale(6),
+    width: moderateScale(90),
+    borderRadius: moderateScale(50),
     alignItems: 'center',
     justifyContent: 'center',
   },
   AcceptButtonText: {
     fontSize: Height * 0.018,
     color: '#fff',
-    fontWeight: '600',
+    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans',
   },
   RejectButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#f5efe8',
     height: moderateScale(30),
-    width: moderateScale(80),
-    borderRadius: moderateScale(6),
+    width: moderateScale(90),
+    borderRadius: moderateScale(50),
     alignItems: 'center',
     justifyContent: 'center',
   },
   RejectButtonText: {
     fontSize: Height * 0.018,
-    color: '#2F3237',
-    fontWeight: '600',
+    color: '#1b160b',
+    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans',
   },
 });

@@ -1,23 +1,19 @@
 import { ImageBackground, Keyboard, KeyboardAvoidingView, StyleSheet, Text, View, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState } from 'react'
 import { Height, Width } from '../utils';
 import { moderateScale } from 'react-native-size-matters';
 import Input from '../components/RegistrationComponents/Input';
 import PasswordInput from '../components/RegistrationComponents/PasswordInput';
 import SubmitButton from '../components/RegistrationComponents/SubmitButton';
-import GoogleRegistrationButton from '../components/RegistrationComponents/GoogleRegistrationButton';
 import { encryptData, decryptData } from '../EncryptData';
 import { signInWithCustomToken } from 'firebase/auth';
 import * as Google from "expo-auth-session/providers/google";
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 
-
-
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
-
 
 const SignUp = ({ setCurrentPage, setUserEmail }) => {
   const [data, setData] = useState({ name: '', username: '', email: '', password: '', confirmpassword: '' });
@@ -162,12 +158,13 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
 
   const CreateAccount = async () => {
     setLoading(true);
+   
     const { name, username, email, password } = data;
     try {
       const encryptedEmail = encryptData(email, SECRET_KEY);
       const encryptedPassword = encryptData(password, SECRET_KEY);
 
-      const response = await fetch('https://server-production-3bdc.up.railway.app/users/register', {
+      const response = await fetch('http://192.168.29.62:5000/users/register', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -251,12 +248,6 @@ const SignUp = ({ setCurrentPage, setUserEmail }) => {
             </View>
             <SubmitButton loading={loading} onPress={() => { validateData() }} underOnPress={() => { setCurrentPage('LOGIN') }} title={'Create Account'}
               titleTwo={'Already have an account?'} ButtonText={'Log In'} />
-            {/* <View style={styles.OrView}>
-              <View style={styles.OrViewLeft} />
-              <Text style={styles.OrViewText}>OR</Text>
-              <View style={styles.OrViewRight} />
-            </View>
-            <GoogleRegistrationButton onPress={() => { promptAsync({ showInRecents: true }); }} title={'Sign up with Google'} /> */}
           </View>
         </ImageBackground>
       </KeyboardAvoidingView>
@@ -268,7 +259,7 @@ export default SignUp;
 
 const styles = StyleSheet.create({
   Registration: {
-    height: Height,
+    height: Height - moderateScale(110),
     width: Width,
     justifyContent: 'center',
     alignItems: 'center',

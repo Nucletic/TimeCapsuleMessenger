@@ -13,10 +13,10 @@ export default TimeIndicatorTitle
 
 const styles = StyleSheet.create({
   TimeIndicatorTitle: {
-    fontSize: Height * 0.017,
-    color: '#9095A0',
+    fontSize: Height * 0.022,
+    color: '#1C170D',
+    fontWeight: '700',
     paddingHorizontal: moderateScale(16),
-    paddingVertical: (4),
-    backgroundColor: '#F3F4F6',
+    paddingVertical: (6),
   }
 });

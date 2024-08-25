@@ -4,10 +4,13 @@ import { moderateScale } from 'react-native-size-matters';
 import { Height } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
 
+
+
 const TaleCard = ({ data, CustomUUID }) => {
 
   const navigation = useNavigation();
 
+  
 
   const getTale = () => {
     return true;
@@ -28,7 +31,6 @@ const TaleCard = ({ data, CustomUUID }) => {
       navigation.navigate('Tale', { data: data });
     }
   }
-
 
 
   return (
@@ -64,9 +66,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   TaleCardText: {
-    color: '#9095A0',
+    color: '#1b160b',
     fontWeight: '600',
-    fontSize: Height * 0.015,
+    fontSize: Height * 0.016,
     margin: moderateScale(2),
+    fontFamily: 'PlusJakartaSans',
   }
 });

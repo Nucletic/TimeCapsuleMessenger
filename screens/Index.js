@@ -50,7 +50,7 @@ const Index = () => {
           setLoggedIn(false);
         }
       } catch (error) {
-        console.error('Error during login:', error);
+        console.log('Error during login:', error);
       } finally {
         setLoading(false); // Set loading to false after all operations
       }
@@ -69,11 +69,6 @@ const Index = () => {
       saveExpoPushTokenToFirebaseWithoutUserUID(expoPushToken)
     }
   }, [expoPushToken])
-
-
-
-
-
 
   const checkMember = async (uid) => {
     try {
@@ -107,7 +102,6 @@ const Index = () => {
     }
   }
 
-
   const saveExpoPushTokenToFirebaseWithoutUserUID = async (expoPushToken) => {
     try {
       const token = expoPushToken?.data; // Ensure you have the token data ready
@@ -119,24 +113,15 @@ const Index = () => {
 
       console.log("Expo push token saved successfully");
     } catch (error) {
-      console.error("Error saving Expo push token:", error);
+      console.log("Error saving Expo push token:", error);
     }
   };
-
-
-
-
-
-
-
-
-
 
   const deleteTimedOutTale = async () => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/deleteTimedOutTale`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/deleteTimedOutTale`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -165,10 +150,10 @@ const Index = () => {
           lastActive: serverTimestamp(),
         });
       } else {
-        console.error('Document does not exist');
+        console.log('Document does not exist');
       }
     } catch (error) {
-      console.error('Error during updating activity status:', error);
+      console.log('Error during updating activity status:', error);
     }
   }
 
@@ -181,7 +166,6 @@ const Index = () => {
       SplashScreen.hideAsync();
     }
   }, [loading]);
-
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState) => {
@@ -198,7 +182,6 @@ const Index = () => {
     };
   }, [userUID]);
 
-
   const offlineUserActivityUpdate = async (uid) => {
     try {
       const userDocRef = doc(FIREBASE_DB, 'users', uid);
@@ -208,12 +191,12 @@ const Index = () => {
       });
       console.log('User activity status updated successfully');
     } catch (error) {
-      console.error('Error updating activity status:', error);
+      console.log('Error updating activity status:', error);
     }
   };
 
 
-
+  
   return (
     <>
       {LoggedIn ? <MainNavigation /> : <Registration setLoggedIn={setLoggedIn} />}

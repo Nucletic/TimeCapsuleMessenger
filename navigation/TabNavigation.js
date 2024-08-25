@@ -4,7 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { moderateScale } from 'react-native-size-matters';
 import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
 import { Height, Width } from '../utils';
-import { AccountStack, ChatsStack, NotificationStack, SearchStack } from './StackNavigation';
+import { AccountStack, ChatsStack, GamesStack, NotificationStack, SearchStack } from './StackNavigation';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -27,7 +28,7 @@ const screenOptions = {
   headerShown: false,
   tabBarStyle: {
     backgroundColor: '#fff',
-    height: moderateScale(54),
+    height: moderateScale(60),
     borderTopColor: '#f0f0f1',
     alignItems: 'center',
     justifyContent: 'center',
@@ -107,48 +108,75 @@ const TabNavigation = () => {
   return (
     <Tab.Navigator initialRouteName={'ChatsStack'} screenOptions={screenOptions}>
       <Tab.Screen name='ChatsStack' component={ChatsStack} options={({ route }) => ({
-        tabBarStyle: { display: getRouteName(route) },
+        tabBarStyle: { height: moderateScale(60), display: getRouteName(route), },
         tabBarIcon: ({ focused }) => {
           return (
             <View style={styles.tabIconContainer}>
               <View style={styles.tabIconButton}>
-                <Image source={focused ? require('../assets/Icons/ChatsTabButton.png') : require('../assets/Icons/ChatsTabButtonDark.png')} style={styles.tabIcon} />
+                <Image source={focused ? require('../assets/Icons/animeIcons/ChatTabIconDark.png') : require('../assets/Icons/animeIcons/ChatTabIcon.png')} style={styles.tabIcon} />
+                <Text style={[styles.tabIconText, { color: focused ? '#1C170D' : '#A1824A' }]}>
+                  {'Chats '}
+                </Text>
               </View>
             </View>
           )
         }
       })} />
       <Tab.Screen name='SearchStack' component={SearchStack} options={({ route }) => ({
-        tabBarStyle: { display: getRouteName(route) },
+        tabBarStyle: { height: moderateScale(60), display: getRouteName(route) },
         tabBarIcon: ({ focused }) => {
           return (
             <Pressable onPress={() => { navigation.navigate('SearchStack', { screen: 'Search' }) }} style={styles.tabIconContainer}>
               <View style={styles.tabIconButton}>
-                <Image source={focused ? require('../assets/Icons/SearchTabButton.png') : require('../assets/Icons/SearchTabButtonDark.png')} style={styles.tabIcon} />
+                <Image source={focused ? require('../assets/Icons/animeIcons/SearchTabIconDark.png') : require('../assets/Icons/animeIcons/SearchTabIcon.png')} style={styles.tabIcon} />
+                <Text style={[styles.tabIconText, { color: focused ? '#1C170D' : '#A1824A' }]}>
+                  {'Search '}
+                </Text>
               </View>
             </Pressable>
           )
         }
       })} />
-      < Tab.Screen name='NotificationStack' component={NotificationStack} options={({ route }) => ({
-        tabBarStyle: { display: getRouteName(route) },
+      <Tab.Screen name='GamesStack' component={GamesStack} options={({ route }) => ({
+        tabBarStyle: { height: moderateScale(60), display: getRouteName(route) },
+        tabBarIcon: ({ focused }) => {
+          return (
+            <Pressable onPress={() => { navigation.navigate('GamesStack', { screen: 'Games' }) }} style={styles.tabIconContainer}>
+              <View style={styles.tabIconButton}>
+                <Image source={focused ? require('../assets/Icons/animeIcons/GamesTabIconDark.png') : require('../assets/Icons/animeIcons/GamesTabIcon.png')} style={styles.tabIcon} />
+                <Text style={[styles.tabIconText, { color: focused ? '#1C170D' : '#A1824A' }]}>
+                  {'Games '}
+                </Text>
+              </View>
+            </Pressable>
+          )
+        }
+      })} />
+      <Tab.Screen name='NotificationStack' component={NotificationStack} options={({ route }) => ({
+        tabBarStyle: { height: moderateScale(60), display: getRouteName(route) },
         tabBarIcon: ({ focused }) => {
           return (
             <View style={styles.tabIconContainer}>
               <View style={styles.tabIconButton}>
-                <Image source={focused ? require('../assets/Icons/NotificationTabButton.png') : require('../assets/Icons/NotificationTabButtonDark.png')} style={styles.tabIcon} />
+                <Image source={focused ? require('../assets/Icons/animeIcons/NotificationTabIconDark.png') : require('../assets/Icons/animeIcons/NotificationTabIcon.png')} style={styles.tabIcon} />
+                <Text style={[styles.tabIconText, { color: focused ? '#1C170D' : '#A1824A' }]}>
+                  {'Notification '}
+                </Text>
               </View>
             </View>
           )
         }
       })} />
-      < Tab.Screen name='AccountStack' component={AccountStack} options={({ route }) => ({
-        tabBarStyle: { display: getRouteName(route) },
+      <Tab.Screen name='AccountStack' component={AccountStack} options={({ route }) => ({
+        tabBarStyle: { height: moderateScale(60), display: getRouteName(route) },
         tabBarIcon: ({ focused }) => {
           return (
             <View style={styles.tabIconContainer}>
               <View style={styles.tabIconButton}>
-                <Image source={focused ? require('../assets/Icons/AccountTabButton.png') : require('../assets/Icons/AccountTabButtonDark.png')} style={styles.tabIcon} />
+                <Image source={focused ? require('../assets/Icons/animeIcons/AccountTabIconDark.png') : require('../assets/Icons/animeIcons/AccountTabIcon.png')} style={styles.tabIcon} />
+                <Text style={[styles.tabIconText, { color: focused ? '#1C170D' : '#A1824A' }]}>
+                  {'Account '}
+                </Text>
               </View>
             </View>
           )
@@ -171,6 +199,11 @@ const styles = StyleSheet.create({
     height: moderateScale(30),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  tabIconText: {
+    fontSize: Height * 0.015,
+    fontFamily: 'PlusJakartaSans',
   },
 
   tabIcon: {

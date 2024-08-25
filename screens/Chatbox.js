@@ -255,7 +255,7 @@ const Chatbox = ({ navigation, route }) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/sendNotification`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/sendNotification`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -453,7 +453,7 @@ const Chatbox = ({ navigation, route }) => {
       <View style={styles.ChatBoxTopContent}>
         <View style={styles.ChatBoxTopRightContent}>
           <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-            <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+            <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
           </Pressable>
           <Pressable onPress={() => { navigation.navigate('ChatInfo', { chatId, username, profileImage }) }} style={styles.ProfileButton}>
             <Image source={{ uri: profileImage }} style={styles.ProfileButtonImage} />

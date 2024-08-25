@@ -9,20 +9,17 @@ import { FIREBASE_AUTH } from '../firebaseConfig'
 import { encryptData, decryptData } from '../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext';
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1715681311';
-const bannerAdUnitId1 = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/4669147712';
-
+import FilterAllUnread from '../components/SmallEssentials/FilterAllUnread';
 
 const FriendsInfo = ({ navigation, route }) => {
 
+  
 
-  const { userId, mutualFriends, username, profileImage } = route.params;
+  const { userId, mutualFriends, username, profileImage, name } = route.params;
 
   const [chatmates, setChatmates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +56,7 @@ const FriendsInfo = ({ navigation, route }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getChatmates/${userId}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getChatmates/${userId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -89,7 +86,7 @@ const FriendsInfo = ({ navigation, route }) => {
     <View style={styles.Container}>
       <View style={styles.FriendsInfoNav}>
         <Pressable onPress={() => { navigation.goBack(); }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <View style={styles.FriendsNavDetails}>
           <Image source={{ uri: profileImage }} style={styles.FriendsNavDetailsImage} />
@@ -102,19 +99,8 @@ const FriendsInfo = ({ navigation, route }) => {
           <LoaderAnimation size={40} color={'#49505B'} />
         </View>) :
         (<>
-          <View style={styles.FriendsInfoNavigation}>
-            <Pressable onPress={() => handleTabPress(0)}>
-              <View style={styles.FriendsInfoNavigationButton}>
-                <Text style={styles.FriendsInfoNavigationButtonText}>{chatmates?.length} Chatmates</Text>
-              </View>
-            </Pressable>
-            <Pressable onPress={() => handleTabPress(1)}>
-              <View style={styles.FriendsInfoNavigationButton}>
-                <Text style={styles.FriendsInfoNavigationButtonText}>{mutualFriends?.length} Common Mates</Text>
-              </View>
-            </Pressable>
-            <Animated.View style={[styles.FriendsInfoNavigationIndicator, { left: indicatorPosition }]} />
-          </View>
+          <FilterAllUnread firstFuncText={`${chatmates?.length} Chatmates`} secondFuncText={`${mutualFriends ? mutualFriends?.length : 0} Common Mates`}
+            onAllPress={() => handleTabPress(0)} onUnreadPress={() => handleTabPress(1)} />
           <Animated.FlatList horizontal pagingEnabled ref={flatListRef}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -140,10 +126,6 @@ const MainContentOne = ({ chatmates, ownCustomUUID }) => {
   const [level, setLevel] = useState(0);
 
 
-  const { showAds } = useContext(AppContext);
-
-
-
   useEffect(() => {
     setLoading(true);
     if (chatmates && chatmates.length > 0) {
@@ -161,8 +143,8 @@ const MainContentOne = ({ chatmates, ownCustomUUID }) => {
     <View style={styles.MainContentOne}>
       <View style={styles.FriendsInfoSearch}>
         <View style={styles.FriendsInfoSearchView}>
-          <Image source={require('../assets/Icons/Search.png')} style={styles.FriendsInfoSearchViewIcon} />
-          <TextInput ref={inputRef} placeholder='Search Chatmates' value={searchQuery} onChangeText={setSearchQuery} placeholderTextColor={'#C3C3C3'} style={styles.FriendsInfoSearchInput} />
+          <Image source={require('../assets/Icons/animeIcons/SearchIcon.png')} style={styles.FriendsInfoSearchViewIcon} />
+          <TextInput ref={inputRef} placeholder='Search Chatmates' value={searchQuery} onChangeText={setSearchQuery} placeholderTextColor={'#A1824A'} style={styles.FriendsInfoSearchInput} />
         </View>
       </View>
       {(loading) ?
@@ -170,22 +152,16 @@ const MainContentOne = ({ chatmates, ownCustomUUID }) => {
           <LoaderAnimation size={40} color={'#49505B'} />
         </View>) :
         (<View style={styles.MainContentCards}>
+
           {(level !== searchResults.length && searchQuery.length === 0) &&
             <Image source={require('../assets/Animations/LoadingFriendsInfo.gif')} style={styles.loadingFriendsInfoGIF} />}
           {searchResults?.length > 0 ? (searchResults?.map((chatmate, index) => {
             return (
-              <FriendsInfoMateCard key={index} setLevel={setLevel} ownCustomUUID={ownCustomUUID} username={chatmate.name} profileImage={chatmate.profileImage} userId={chatmate.userId} />
+              <FriendsInfoMateCard key={index} setLevel={setLevel} ownCustomUUID={ownCustomUUID} username={chatmate.username} name={chatmate.name} profileImage={chatmate.profileImage} userId={chatmate.userId} />
             )
           }))
             : (<NoUserFoundAnimation titleText={`No Chatmates found${searchQuery && ` with "${searchQuery}"`}`} />)}
         </View>)}
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }
@@ -197,8 +173,6 @@ const MainContentTwo = ({ chatmates, ownCustomUUID }) => {
   const [loading, setLoading] = useState(true);
 
   const [level, setLevel] = useState(0);
-  const { showAds } = useContext(AppContext);
-
 
   useEffect(() => {
     setLoading(true);
@@ -218,7 +192,7 @@ const MainContentTwo = ({ chatmates, ownCustomUUID }) => {
       <View style={styles.FriendsInfoSearch}>
         <View style={styles.FriendsInfoSearchView}>
           <Image source={require('../assets/Icons/Search.png')} style={styles.FriendsInfoSearchViewIcon} />
-          <TextInput ref={inputRef} placeholder='Search Mutual Chatmates' value={searchQuery} onChangeText={setSearchQuery} placeholderTextColor={'#C3C3C3'} style={styles.FriendsInfoSearchInput} />
+          <TextInput ref={inputRef} placeholder='Search Mutual Chatmates' value={searchQuery} onChangeText={setSearchQuery} placeholderTextColor={'#A1824A'} style={styles.FriendsInfoSearchInput} />
         </View>
       </View>
       {(loading) ?
@@ -230,18 +204,11 @@ const MainContentTwo = ({ chatmates, ownCustomUUID }) => {
             <Image source={require('../assets/Animations/LoadingFriendsInfo.gif')} style={styles.loadingFriendsInfoGIF} />}
           {searchResults?.length > 0 ? (searchResults?.map((chatmate, index) => {
             return (
-              <FriendsInfoMateCard key={index} username={chatmate.name} setLevel={setLevel} ownCustomUUID={ownCustomUUID} profileImage={chatmate.profileImage} userId={chatmate.userId} />
+              <FriendsInfoMateCard key={index} setLevel={setLevel} ownCustomUUID={ownCustomUUID} username={chatmate.username} name={chatmate.name} profileImage={chatmate.profileImage} userId={chatmate.userId} />
             )
           }))
             : (<NoUserFoundAnimation titleText={`No Chatmates found${searchQuery && ` with "${searchQuery}"`}`} />)}
         </View>)}
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId1}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }
@@ -261,7 +228,7 @@ const styles = StyleSheet.create({
     borderColor: '#F8F9FA',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   BackButton: {
     height: moderateScale(30),
@@ -275,6 +242,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: moderateScale(10),
+    marginLeft: moderateScale(10),
   },
   FriendsNavDetailsImage: {
     height: moderateScale(30),
@@ -283,8 +251,9 @@ const styles = StyleSheet.create({
   },
   FriendsNavDetailsName: {
     fontSize: Height * 0.026,
-    color: '#49505B',
+    color: '#1C170D',
     fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
   },
   FriendsInfoNavigation: {
     height: moderateScale(55),
@@ -301,8 +270,8 @@ const styles = StyleSheet.create({
   },
   FriendsInfoNavigationButtonText: {
     fontSize: Height * 0.017,
-    // fontWeight: '600',
     color: '#9095A0',
+    fontFamily: 'PlusJakartaSans',
   },
   FriendsInfoNavigationIndicator: {
     position: 'absolute',
@@ -316,27 +285,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   FriendsInfoSearch: {
-    backgroundColor: '#F8F9FA',
-    padding: moderateScale(16),
+    marginHorizontal: moderateScale(16),
+    marginTop: moderateScale(12),
+    height: moderateScale(40),
+    backgroundColor: '#f5efe8',
+    borderRadius: moderateScale(12),
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(10),
+    gap: moderateScale(10),
   },
   FriendsInfoSearchView: {
-    borderWidth: moderateScale(1),
-    borderColor: '#49505B',
-    borderRadius: moderateScale(6),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: moderateScale(5),
-    gap: moderateScale(8),
+    gap: moderateScale(10),
   },
   FriendsInfoSearchViewIcon: {
-    height: moderateScale(20),
-    width: moderateScale(20),
+    height: moderateScale(22),
+    width: moderateScale(22),
   },
   FriendsInfoSearchInput: {
-    fontSize: Height * 0.016,
+    fontSize: Height * 0.017,
     padding: 0,
     width: '90%',
     color: '#49505B',
+    fontFamily: 'PlusJakartaSans',
   },
   MainContentOne: {
     width: Width,

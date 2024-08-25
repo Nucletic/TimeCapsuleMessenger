@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image, TextInput, Pressable, Keyboard, ScrollView } from 'react-native';
-import React, { useEffect, useRef, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { moderateScale } from 'react-native-size-matters';
 import { Height, Width } from '../utils';
 import SearchProfileCard from '../components/SearchComponents/SearchProfileCard';
@@ -7,19 +7,12 @@ import { FIREBASE_DB, FIREBASE_AUTH } from '../firebaseConfig';
 import { getDocs, collection, query, where } from 'firebase/firestore';
 import LoaderAnimation from '../components/SmallEssentials/LoaderAnimation';
 import NoUserFoundAnimation from '../components/SmallEssentials/NoUserFoundAnimation';
-import AppContext from '../ContextAPI/AppContext';
-
-import { encryptData, decryptData } from '../EncryptData'
+import { encryptData } from '../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Constants from 'expo-constants';
 import { useFocusEffect } from '@react-navigation/native';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
-
-
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1907253004';
 
 
 const SearchAccount = ({ navigation }) => {
@@ -30,9 +23,6 @@ const SearchAccount = ({ navigation }) => {
   const [noUserFound, setNoUserFound] = useState(false);
   const [searches, setSearches] = useState([]);
   const [CustomUUID, setCustomUUID] = useState(null);
-
-  const { showAds } = useContext(AppContext);
-
 
   useEffect(() => {
     inputRef.current.focus();
@@ -86,7 +76,7 @@ const SearchAccount = ({ navigation }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getRecentSearches/${CustomUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getRecentSearches/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -114,7 +104,7 @@ const SearchAccount = ({ navigation }) => {
       setSearches([...updatedSearches]);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/removeRecentSearches/${CustomUUID}/${userId}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/removeRecentSearches/${CustomUUID}/${userId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -143,11 +133,11 @@ const SearchAccount = ({ navigation }) => {
     <View style={styles.SearchAccount}>
       <View style={styles.SearchAccountNav}>
         <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <View style={styles.SearchContainer}>
-          <Image source={require('../assets/Icons/Search.png')} style={styles.SearchIcon} />
-          <TextInput ref={inputRef} style={styles.SearchInput} value={searchQuery} onChangeText={setSearchQuery} placeholder='Search' placeholderTextColor={'#C3C3C3'} />
+          <Image source={require('../assets/Icons/animeIcons/SearchIcon.png')} style={styles.SearchIcon} />
+          <TextInput ref={inputRef} style={styles.SearchInput} value={searchQuery} onChangeText={setSearchQuery} placeholder='Search account' placeholderTextColor={'#a3814a'} />
         </View>
       </View>
       <Pressable onPress={Keyboard.dismiss} style={styles.SearchAccountMainContent}>
@@ -187,14 +177,6 @@ const SearchAccount = ({ navigation }) => {
             </ScrollView>
           </>)}
       </Pressable>
-
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }
@@ -223,17 +205,18 @@ const styles = StyleSheet.create({
   },
   SearchContainer: {
     paddingHorizontal: moderateScale(8),
-    paddingVertical: moderateScale(3),
     gap: moderateScale(10),
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3F4F6',
-    borderRadius: moderateScale(8),
+    height: moderateScale(40),
+    backgroundColor: '#f5efe8',
+    borderRadius: moderateScale(12),
     width: Width - moderateScale(32) - moderateScale(10) - moderateScale(30)
   },
   SearchIcon: {
-    width: moderateScale(18),
-    height: moderateScale(18),
+    width: moderateScale(22),
+    height: moderateScale(22),
   },
   SearchInput: {
     fontSize: Height * 0.019,
@@ -254,13 +237,13 @@ const styles = StyleSheet.create({
   MainContentTitle: {
     fontSize: Height * 0.018,
     fontWeight: '900',
-    color: '#49505B',
+    color: '#1b160b',
   },
   SeeAllButton: {},
   SeeAllButtonText: {
     fontSize: Height * 0.016,
     fontWeight: '600',
-    color: '#F7706E',
+    color: '#A1824A',
   },
   SearchCardsContainer: {
     gap: moderateScale(12),
@@ -270,6 +253,5 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: '#000',
   },
 });

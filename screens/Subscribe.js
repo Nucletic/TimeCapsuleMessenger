@@ -4,10 +4,11 @@ import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import { encryptData, decryptData } from '../EncryptData'
 import { FIREBASE_AUTH, FIREBASE_DB } from '../firebaseConfig'
-import { BannerAd, BannerAdSize, TestIds, RewardedAd, RewardedAdEventType } from 'react-native-google-mobile-ads';
 import { collection, doc, getDoc, getDocs, increment, query, updateDoc, where } from 'firebase/firestore'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import AppContext from '../ContextAPI/AppContext'
+import { BannerAd, BannerAdSize, TestIds, RewardedAd, RewardedAdEventType } from 'react-native-google-mobile-ads';
+
 
 
 const rewardedAdUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-4598459833894527/3814260842';
@@ -17,13 +18,18 @@ const rewarded = RewardedAd.createForAdRequest(rewardedAdUnitId, {
   keywords: ['games', 'gaming', 'fashion', 'clothing'],
 });
 
+const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/4663579130';
+
+
 const Subscribe = ({ navigation }) => {
 
   const [loaded, setLoaded] = useState(false);
   const [CustomUUID, setCustomUUID] = useState(null);
   const [alreadyMember, setAlreadyMember] = useState(null);
   const [watchedAds, setWatchedAds] = useState(0);
-  const { setShowAds } = useContext(AppContext);
+  const { setShowAds, showAds } = useContext(AppContext);
+
+  
 
   AsyncStorage.getItem('CustomUUID').then((CustomUUID) => {
     setCustomUUID(CustomUUID);
@@ -85,16 +91,15 @@ const Subscribe = ({ navigation }) => {
     let watchedAdsCount = null;
     querySnapshot.forEach(async (docSnapshot) => {
       const data = docSnapshot.data();
-      if (data.watchedAds === 5) {
+      if (data.watchedAds === 15) {
         setAlreadyMember(true);
-        setShowAds(false);
+        setShowAds(true);
       }
       watchedAdsCount = data.watchedAds || 0;
       setWatchedAds(watchedAdsCount)
     });
 
   }
-
   const increaseAdSeenCount = async () => {
     try {
       const usersCollection = collection(FIREBASE_DB, 'users');
@@ -113,12 +118,11 @@ const Subscribe = ({ navigation }) => {
   }
 
 
-
   return (
     <View style={styles.Container}>
       <View style={styles.SettingsPrivacyNav}>
         <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <Text style={styles.PageTitle}>Subscribe</Text>
       </View>
@@ -140,6 +144,11 @@ const Subscribe = ({ navigation }) => {
           </Text>
         </View>
       </ScrollView>
+      {(!showAds || showAds === false) &&
+        <BannerAd
+          unitId={bannerAdUnitId}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />}
     </View>
   )
 }
@@ -170,8 +179,9 @@ const styles = StyleSheet.create({
   },
   PageTitle: {
     fontSize: Height * 0.026,
-    color: '#49505B',
     fontWeight: '900',
+    color: '#1C170D',
+    fontFamily: 'PlusJakartaSans',
   },
   MainContent: {
     padding: moderateScale(16),
@@ -184,14 +194,16 @@ const styles = StyleSheet.create({
   },
   LocationSwitchTitle: {
     fontSize: Height * 0.020,
-    color: '#49505B',
-    fontWeight: '600',
+    fontWeight: '700',
+    color: '#1C170D',
+    fontFamily: 'PlusJakartaSans',
   },
   LocationPrecautionText: {
     fontSize: Height * 0.014,
-    color: '#C3C3C3',
     marginTop: moderateScale(8),
     lineHeight: Height * 0.019,
+    color: '#A1824A',
+    fontFamily: 'PlusJakartaSans',
   },
   LocationSwitchOuter: {
     borderWidth: moderateScale(2),

@@ -7,29 +7,15 @@ import LoaderAnimation from '../components/SmallEssentials/LoaderAnimation'
 import ConfirmationPrompt from '../components/SmallEssentials/ConfirmationPrompt'
 import NoUserFoundAnimation from '../components/SmallEssentials/NoUserFoundAnimation'
 
+
 import { FIREBASE_AUTH } from '../firebaseConfig'
 import { encryptData, decryptData } from '../EncryptData'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-
-
-
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext'
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/7457627420';
-
-
-
-
-
 const BlockedAccounts = ({ navigation }) => {
-
-
-  const { showAds } = useContext(AppContext);
+  
 
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState(null);
@@ -45,7 +31,7 @@ const BlockedAccounts = ({ navigation }) => {
       setLoading(true);
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getBlockedAccounts`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getBlockedAccounts`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -67,12 +53,11 @@ const BlockedAccounts = ({ navigation }) => {
     }
   }
 
-
   const unblockUser = async (userId) => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/unblockUser/${userId}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/unblockUser/${userId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -114,14 +99,14 @@ const BlockedAccounts = ({ navigation }) => {
     <View style={styles.Container}>
       <View style={styles.SettingsPrivacyNav}>
         <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <Text style={styles.PageTitle}>Blocked Accounts</Text>
       </View>
       <Pressable style={styles.SearchBox}>
         <View style={styles.MainSearchBoxContainer}>
-          <Image source={require('../assets/Icons/Search.png')} style={styles.MainSearchBoxIcon} />
-          <TextInput ref={inputRef} style={styles.MainSearchInput} value={searchQuery} onChangeText={setSearchQuery} placeholder='Search Blocked Accounts' placeholderTextColor={'#c3c3c3'} />
+          <Image source={require('../assets/Icons/animeIcons/SearchIcon.png')} style={styles.MainSearchBoxIcon} />
+          <TextInput ref={inputRef} style={styles.MainSearchInput} value={searchQuery} onChangeText={setSearchQuery} placeholder='Search Blocked Accounts' placeholderTextColor={'#A1824A'} />
         </View>
       </Pressable>
       {loading ?
@@ -131,21 +116,13 @@ const BlockedAccounts = ({ navigation }) => {
         <ScrollView contentContainerStyle={styles.MainContent}>
           {searchResults.length > 0 ? (searchResults?.map((account, index) => {
             return (
-              <BlockedAccountCard key={index} profileImage={account.profileImage} username={account.username} onPress={() => { getConfirmation(index) }} userId={account.userId} />
+              <BlockedAccountCard key={index} profileImage={account.profileImage} name={account.name} username={account.username} onPress={() => { getConfirmation(index) }} userId={account.userId} />
             )
           })) :
             (<NoUserFoundAnimation titleText={`No Blocked Users found${searchQuery && ` with "${searchQuery}"`}`} />)}
         </ScrollView>}
       <ConfirmationPrompt showConfirmationPrompt={showConfirmationPrompt} TitleText={`Are you sure you wants to unblock ${unblockingUser?.username}?`}
         onPressOne={() => { setShowConfirmationPrompt(false) }} onPressTwo={() => { unblockUser(unblockingUser.userId) }} OneText={'Cancel'} TwoText={'Unblock'} />
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>
-      }
     </View>
   )
 }
@@ -163,8 +140,6 @@ const styles = StyleSheet.create({
     paddingBottom: moderateScale(8),
     flexDirection: 'row',
     gap: moderateScale(12),
-    borderBottomWidth: moderateScale(1),
-    borderBottomColor: '#F8F9FA',
   },
   BackButton: {
     height: moderateScale(30),
@@ -176,7 +151,7 @@ const styles = StyleSheet.create({
   },
   PageTitle: {
     fontSize: Height * 0.026,
-    color: '#49505B',
+    color: '#1C170D',
     fontWeight: '900',
   },
   MainContent: {
@@ -184,12 +159,17 @@ const styles = StyleSheet.create({
     gap: moderateScale(21),
   },
   SearchBox: {
-    padding: moderateScale(16),
-    backgroundColor: '#F8F9FA',
+    marginHorizontal: moderateScale(16),
+    marginTop: moderateScale(12),
+    height: moderateScale(40),
+    backgroundColor: '#f5efe8',
+    borderRadius: moderateScale(12),
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(10),
+    gap: moderateScale(10),
   },
   MainSearchBoxContainer: {
-    borderWidth: moderateScale(1),
-    borderColor: '#49505B',
     borderRadius: moderateScale(6),
     flexDirection: 'row',
     alignItems: 'center',
@@ -198,15 +178,12 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(3),
   },
   MainSearchBoxIcon: {
-    height: moderateScale(20),
-    width: moderateScale(20),
-  },
-  MainSearchBoxText: {
-    color: '#C3C3C3',
-    fontSize: Height * 0.016,
+    height: moderateScale(22),
+    width: moderateScale(22),
   },
   MainSearchInput: {
-    width: '90%'
+    width: '90%',
+    fontFamily: 'PlusJakartaSans',
   },
   LoadingContainer: {
     height: Height - moderateScale(240),

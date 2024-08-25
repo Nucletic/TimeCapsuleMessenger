@@ -1,31 +1,21 @@
 import { Pressable, StyleSheet, Text, View, Image, ScrollView } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { moderateScale } from 'react-native-size-matters'
-import { Height, Width } from '../utils'
+import { Height } from '../utils'
 import SearchProfileCard from '../components/SearchComponents/SearchProfileCard'
 
 import { FIREBASE_AUTH } from '../firebaseConfig'
-import { encryptData, decryptData } from '../EncryptData'
+import { encryptData } from '../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext'
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/1476928037';
-
-
 const RecentSearches = ({ navigation, route }) => {
 
   const { searches } = route.params;
-
-  const { showAds } = useContext(AppContext);
-
   const [searchesRecent, setSearchesRecent] = useState([...searches]);
-
 
   const removeRecentSearch = async (userId, index) => {
     try {
@@ -35,7 +25,7 @@ const RecentSearches = ({ navigation, route }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/removeRecentSearches/${CustomUUID}/${userId}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/removeRecentSearches/${CustomUUID}/${userId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -59,7 +49,7 @@ const RecentSearches = ({ navigation, route }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/clearAllRecentSearches/${CustomUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/clearAllRecentSearches/${CustomUUID}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -83,7 +73,7 @@ const RecentSearches = ({ navigation, route }) => {
     <View style={styles.RecentSearches}>
       <View style={styles.RecentSearchesNav}>
         <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <Text style={styles.PageTitle}>Recent Searches</Text>
       </View>
@@ -91,7 +81,7 @@ const RecentSearches = ({ navigation, route }) => {
         <View style={styles.MainContentTitleContainer}>
           {searchesRecent.length > 0 &&
             <>
-              <Text style={styles.MainContentTitle}>Recent Searches</Text>
+              <Text style={styles.MainContentTitle}>Recent</Text>
               <Pressable onPress={() => { clearAllRecentSearches() }} style={styles.SeeAllButton}>
                 <Text style={styles.SeeAllButtonText}>Clear All</Text>
               </Pressable>
@@ -105,14 +95,6 @@ const RecentSearches = ({ navigation, route }) => {
           })}
         </View>
       </ScrollView>
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>
-      }
     </View>
   )
 }
@@ -163,7 +145,7 @@ const styles = StyleSheet.create({
   SeeAllButtonText: {
     fontSize: Height * 0.016,
     fontWeight: '600',
-    color: '#F7706E',
+    color: '#A1824A',
   },
   SearchCardsContainer: {
     gap: moderateScale(12),

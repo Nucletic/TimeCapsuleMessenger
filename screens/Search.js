@@ -1,27 +1,21 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import React, { useState, useEffect, useContext } from 'react'
-import { Height, Width } from '../utils'
+import React, { useState, useEffect } from 'react'
+import { Height } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import SearchBar from '../components/SearchComponents/SearchBar'
 import RecommendedSearchCard from '../components/SearchComponents/RecommendedSearchCard'
 
 import { FIREBASE_DB, FIREBASE_AUTH } from '../firebaseConfig';
-import { encryptData, decryptData } from '../EncryptData'
+import { encryptData } from '../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import Constants from 'expo-constants';
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext'
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/5719425372';
 
 
 
-const Search = () => {
-
-  const { showAds } = useContext(AppContext);
+const Search = ({ navigation }) => {
 
   const [recommendedUsers, setRecommendedUsers] = useState([]);
   const [CustomUUID, setCustomUUID] = useState(null);
@@ -34,7 +28,7 @@ const Search = () => {
     try {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getUserRecommendations/${CustomUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getUserRecommendations/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -62,7 +56,7 @@ const Search = () => {
 
   return (
     <View style={styles.Container}>
-      <SearchBar />
+      <SearchBar title={'Search Account'} onPress={() => { navigation.navigate('SearchAccount') }} />
       {(recommendedUsers.length > 0) && <Text style={styles.SearchRecommendedTitle}>Recommended for you</Text>}
       <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={styles.SearchRecommendedContent}>
         {(recommendedUsers.length > 0) && recommendedUsers.map((user, i) => {
@@ -71,13 +65,6 @@ const Search = () => {
           )
         })}
       </ScrollView>
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }

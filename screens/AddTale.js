@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { moderateScale } from 'react-native-size-matters';
 import { Height } from '../utils'
-import { useFonts } from 'expo-font';
+
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Slider from '@react-native-community/slider';
 import {
@@ -12,8 +12,7 @@ import {
 import Animated, { useSharedValue, withTiming, useAnimatedStyle, } from 'react-native-reanimated';
 
 import { FIREBASE_AUTH } from '../firebaseConfig'
-import { encryptData, decryptData } from '../EncryptData'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { encryptData } from '../EncryptData'
 
 
 import Constants from 'expo-constants';
@@ -36,20 +35,6 @@ const AddTale = ({ navigation, route }) => {
 
   const fonts = ['Amatic_SC', 'Cinzel', 'Comfortaa', 'Lobster', 'Oswald', 'Pacifico',
     'Playfair_Display', 'Quicksand', 'Raleway', 'Roboto',];
-
-  const [fontsLoaded] = useFonts({
-    'Amatic_SC': require("../assets/Fonts/Amatic_SC/AmaticSC-Regular.ttf",),
-    'Cinzel': require("../assets/Fonts/Cinzel/static/Cinzel-Regular.ttf",),
-    'Comfortaa': require("../assets/Fonts/Comfortaa/static/Comfortaa-Regular.ttf",),
-    'Lobster': require("../assets/Fonts/Lobster/Lobster-Regular.ttf",),
-    'Oswald': require("../assets/Fonts/Oswald/static/Oswald-Regular.ttf",),
-    'Pacifico': require("../assets/Fonts/Pacifico/Pacifico-Regular.ttf",),
-    'Playfair_Display': require("../assets/Fonts/Playfair_Display/static/PlayfairDisplay-Regular.ttf",),
-    'Quicksand': require("../assets/Fonts/Quicksand/static/Quicksand-Regular.ttf",),
-    'Raleway': require("../assets/Fonts/Raleway/static/Raleway-Regular.ttf",),
-    'Roboto': require("../assets/Fonts/Roboto/Roboto-Regular.ttf"),
-  });
-
 
   useEffect(() => {
     (async () => {
@@ -325,7 +310,7 @@ const AddTale = ({ navigation, route }) => {
       formData.append('texts', JSON.stringify(Texts));
 
       // const response = await fetch(`http://10.0.2.2:5000/users/AddTale`, {
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/AddTale`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/AddTale`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -429,7 +414,6 @@ const AddTale = ({ navigation, route }) => {
                   <GestureDetector gesture={panGesture}>
                     <Animated.View style={[{
                       transform: [{ scale: scale }], position: 'absolute', backgroundColor: text.background,
-                      // transform: [{ scale: scale }, { translateX: position }, { translateY: translateY }], position: 'absolute', backgroundColor: text.background,
                       borderRadius: moderateScale(4), paddingHorizontal: moderateScale(12), paddingVertical: moderateScale(12)
                     }, animatedStyle]}>
                       <TextInput value={text.text} onPressOut={() => { setTextMode(true) }} onChangeText={(newText) => handleOnChange(newText, i)} multiline={true}

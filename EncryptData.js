@@ -14,26 +14,3 @@ exports.decryptData = function (combinedData, secretKey) {
   const decrypted = cipherParams.toString(CryptoJS.enc.Utf8);
   return decrypted;
 }
-
-
-// import { Crypto } from 'expo-crypto';
-
-// async function encryptData(data, secretKey) {
-//   const cipherText = await Crypto.digestStringAsync(
-//     Crypto.CryptoDigestAlgorithm.SHA256,
-//     data + secretKey
-//   );
-
-//   return cipherText;
-// }
-
-// import { Crypto } from 'expo-crypto';
-
-// async function decryptData(encryptedData, secretKey) {
-//   const decryptedData = await Crypto.digestStringAsync(
-//     Crypto.CryptoDigestAlgorithm.SHA256,
-//     encryptedData + secretKey
-//   );
-
-//   return decryptedData;
-// }

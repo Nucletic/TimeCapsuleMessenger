@@ -4,7 +4,13 @@ import { moderateScale } from 'react-native-size-matters'
 import { Height, Width } from '../../utils'
 
 
+
 const ConfirmationPrompt = ({ showConfirmationPrompt, TitleText, OneText, TwoText, onPressOne, onPressTwo }) => {
+
+
+  
+
+
 
   const OpacityAnimation = useRef(new Animated.Value(0)).current;
   const ContentAnimation = useRef(new Animated.Value(0)).current;
@@ -121,7 +127,8 @@ const styles = StyleSheet.create({
   TitleText: {
     fontSize: Height * 0.020,
     fontWeight: '700',
-    color: "#49505B",
+    color: "#1C170D",
+    fontFamily: 'PlusJakartaSans',
     textAlign: 'center',
     lineHeight: moderateScale(24),
     paddingHorizontal: moderateScale(10),
@@ -146,11 +153,13 @@ const styles = StyleSheet.create({
   },
   GoodButtonText: {
     fontSize: Height * 0.02,
-    color: "#2F3237",
+    color: "#1C170D",
+    fontFamily: 'PlusJakartaSans',
   },
   BadButtonText: {
     fontSize: Height * 0.02,
-    color: "#F7706E",
-    fontWeight: '600',
+    color: "#A1824A",
+    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans',
   }
 });

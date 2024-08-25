@@ -1,33 +1,25 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState, useCallback, useContext } from 'react'
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useState, useCallback, useContext } from 'react'
 import { Height, Width } from '../utils'
 import { moderateScale } from 'react-native-size-matters'
 import TimeIndicatorTitle from '../components/NotificationComponents/TimeIndicatorTitle'
-import NotificationCard from '../components/NotificationComponents/NotificationCard'
 import LoaderAnimation from '../components/SmallEssentials/LoaderAnimation'
 import { FIREBASE_AUTH } from '../firebaseConfig'
-import { encryptData, decryptData } from '../EncryptData'
+import { encryptData } from '../EncryptData'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import FollowRequestComponenet from '../components/NotificationComponents/FollowRequestComponenet'
+import MessageNotificationCard from '../components/NotificationComponents/MessageNotificationCard'
 
 
 import Constants from 'expo-constants';
-import FollowRequestComponenet from '../components/NotificationComponents/FollowRequestComponenet'
-import MessageNotificationCard from '../components/NotificationComponents/MessageNotificationCard'
 import { useFocusEffect } from '@react-navigation/native'
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import AppContext from '../ContextAPI/AppContext'
-
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/9355418052';
-
-
+import FilterAllUnread from '../components/SmallEssentials/FilterAllUnread'
 
 const Notification = ({ navigation }) => {
-
-
-  const { showAds } = useContext(AppContext);
 
   const [loading, setLoading] = useState(true);
   const [followRequests, setFollowRequests] = useState([]);
@@ -37,13 +29,19 @@ const Notification = ({ navigation }) => {
   const [unreadFollowRequests, setUnreadFollowRequests] = useState([]);
   const [unreadMessageNotifications, setUnreadMessageNotifications] = useState([]);
 
+
+  
+
+
+
+
   const getAllNotifications = async () => {
     try {
       setLoading(true);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/${CustomUUID}/getAllNotifications`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/${CustomUUID}/getAllNotifications`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -92,7 +90,7 @@ const Notification = ({ navigation }) => {
 
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/AcceptChatmateRequest`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/AcceptChatmateRequest`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -126,7 +124,7 @@ const Notification = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       // const response = await fetch(`http://10.0.2.2:5000/users/RejectChatmateRequest`, {
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/RejectChatmateRequest`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/RejectChatmateRequest`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -162,7 +160,7 @@ const Notification = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/markNotificationsAsRead/?CustomUUID=${CustomUUID}/notificationId?=${notification.notificationId}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/markNotificationsAsRead/?CustomUUID=${CustomUUID}/notificationId?=${notification.notificationId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -187,7 +185,7 @@ const Notification = ({ navigation }) => {
       const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
       const encryptedIdToken = encryptData(idToken, SECRET_KEY);
       const CustomUUID = await AsyncStorage.getItem('CustomUUID');
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/markNotificationsAsRead/${CustomUUID}/${null}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/markNotificationsAsRead/${CustomUUID}/${null}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
@@ -203,19 +201,14 @@ const Notification = ({ navigation }) => {
 
   return (
     <View style={styles.Container}>
-      <Text style={styles.PageTitle}>Notification</Text>
-      <View style={styles.NotificationSettingsContainer}>
-        <View style={styles.NotificationSettingsContainerLeft}>
-          <Pressable onPress={() => { setSelectedType('All') }} style={[styles.AllNotificationsButton, selectedType === 'All' && { backgroundColor: '#F3F4F6', }]}>
-            <Text style={[styles.AllNotificationsButtonText, selectedType === 'All' && { color: '#2F3237', }]}>All</Text>
-          </Pressable>
-          <Pressable onPress={() => { setSelectedType('Unread') }} style={[styles.UnreadNotificationsButton, selectedType === 'Unread' && { backgroundColor: '#F3F4F6', }]}>
-            <Text style={[styles.UnreadNotificationsButtonText, selectedType === 'Unread' && { color: '#2F3237', }]}>Unread</Text>
-          </Pressable>
-        </View>
+      <View style={styles.PageTitleContainer}>
+        <Text style={styles.PageTitle}>Notifications</Text>
         <Pressable onPress={() => { MarkAllAsRead() }} style={styles.MarkReadButton}>
-          <Text style={styles.MarkReadButtonText}>Mark all as read</Text>
+          <Image source={require('../assets/Icons/animeIcons/MarkAllAsRead.png')} style={styles.MarkReadIcon} />
         </Pressable>
+      </View>
+      <View style={styles.NotificationSettingsContainer}>
+        <FilterAllUnread firstFuncText={'All'} secondFuncText={'Unread'} onAllPress={() => { setSelectedType('All') }} onUnreadPress={() => { setSelectedType('Unread') }} />
       </View>
       <ScrollView style={styles.MainNotificationContent}>
         <TimeIndicatorTitle titleText={'RECENT'} />
@@ -248,13 +241,6 @@ const Notification = ({ navigation }) => {
             </>
         }
       </ScrollView>
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }
@@ -269,23 +255,27 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingTop: moderateScale(30),
   },
-  PageTitle: {
-    paddingBottom: moderateScale(16),
-    fontSize: Height * 0.026,
-    color: '#49505B',
-    fontWeight: '900',
-    textAlign: 'center',
-    borderBottomWidth: moderateScale(1),
-    borderBottomColor: '#F8F9FA',
-  },
-  NotificationSettingsContainer: {
-    flexDirection: 'row',
+  PageTitleContainer: {
     alignItems: 'center',
     justifyContent: 'space-between',
+    flexDirection: 'row',
     paddingHorizontal: moderateScale(16),
-    paddingVertical: moderateScale(12),
-    borderBottomWidth: moderateScale(1),
-    borderBottomColor: '#F8F9FA',
+    paddingBottom: moderateScale(10),
+  },
+  MarkReadIcon: {
+    height: moderateScale(22),
+    width: moderateScale(22),
+  },
+  PageTitle: {
+    fontSize: Height * 0.032,
+    color: '#1C170D',
+    fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
+  },
+  NotificationSettingsContainer: {
+    alignItems: 'center',
+    marginTop: -moderateScale(10),
+    paddingBottom: moderateScale(8),
   },
   NotificationSettingsContainerLeft: {
     flexDirection: 'row',

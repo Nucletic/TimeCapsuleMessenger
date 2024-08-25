@@ -13,73 +13,27 @@ import { useFocusEffect } from '@react-navigation/native'
 import { collection, doc, onSnapshot, query, where } from 'firebase/firestore'
 import AppContext from '../ContextAPI/AppContext'
 
+import FilterAllUnread from '../components/SmallEssentials/FilterAllUnread'
+
 
 import Constants from 'expo-constants';
+import FollowRecommendations from '../components/ChatsComponents/FollowRecommendations'
+import FriendsInfoMateCard from '../components/AccountComponents/FriendsInfoMateCard'
 const SECRET_KEY = Constants.expoConfig.extra.SECRET_KEY;
 
 
-import { AppOpenAd, BannerAd, BannerAdSize, TestIds, AdEventType } from 'react-native-google-mobile-ads';
-
-
-const adUnitId = __DEV__ ? TestIds.APP_OPEN : 'ca-app-pub-4598459833894527/4947014150';
-const bannerAdUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4598459833894527/8344668849';
-
-
-const appOpenAd = AppOpenAd.createForAdRequest(adUnitId, {
-  keywords: ['fashion', 'clothing'],
-});
-
-
-
 const Chats = ({ navigation }) => {
-
-  const { showAds } = useContext(AppContext);
-
-  useEffect(() => {
-    console.log(showAds);
-  }, [showAds])
-
-
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const unsubscribeLoaded = appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
-      // setLoaded(true);
-    });
-    const unsubscribeEarned = appOpenAd.addAdEventListener(
-      AdEventType.CLOSED,
-      reward => {
-        console.log('User earned reward of ', reward);
-      },
-    );
-    appOpenAd.load();
-    return () => {
-      unsubscribeLoaded();
-      unsubscribeEarned();
-    };
-  }, [loaded]);
-
-
-  useEffect(() => {
-    if (loaded && showAds) {
-      appOpenAd.show();
-      setLoaded(false);
-    }
-  }, [loaded, showAds])
-
-
-
-
-
-
   const [loading, setLoading] = useState(true);
-  const [contacts, setContacts] = useState(null);
+  const [contacts, setContacts] = useState([]);
   const [tales, setTales] = useState(null);
   const [searchDisabled, setSearchDisabled] = useState(true);
-  const [contactDetails, setContactDetails] = useState(null);
+  const [contactDetails, setContactDetails] = useState([]);
   const [CustomUUID, setCustomUUID] = useState(null);
   const [encryptedIdToken, setEncryptedIdToken] = useState(null);
   const [ownTale, setOwnTale] = useState(null);
+  const [filteredContactDetails, setfilteredContactDetails] = useState([]);
+  const [filteredContacts, setfilteredContacts] = useState([]);
+  const [showFollowRecommendation, setShowFollowRecommendation] = useState(false);
 
   const getTokenCustomUUID = async () => {
     const idToken = await FIREBASE_AUTH.currentUser.getIdToken();
@@ -91,7 +45,7 @@ const Chats = ({ navigation }) => {
 
   const getChatContacts = async (CustomUUID, encryptedIdToken) => {
     try {
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getChatContacts/${CustomUUID}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/getChatContacts/${CustomUUID}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -102,8 +56,12 @@ const Chats = ({ navigation }) => {
       })
       const data = await response.json();
       if (response.status === 200) {
-        listenChatChanges();
-        setContacts(data.contacts);
+        if (data.contacts.length === 0) {
+          setShowFollowRecommendation(true);
+        } else {
+          listenChatChanges();
+          setContacts(data.contacts);
+        }
       }
     } catch (error) {
       throw new Error(error);
@@ -119,7 +77,7 @@ const Chats = ({ navigation }) => {
         const contactCustomUUID = CustomUUID === contact.chatId.split('_')[0]
           ? contact.chatId.split('_')[1] : contact.chatId.split('_')[0];
 
-        const response = await fetch(`https://server-production-3bdc.up.railway.app/users/getContactDetails/${contactCustomUUID}`, {
+        const response = await fetch(`http://192.168.29.62:5000/users/getContactDetails/${contactCustomUUID}`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -141,7 +99,7 @@ const Chats = ({ navigation }) => {
 
   const getContactTales = async (CustomUUID, encryptedIdToken) => {
     try {
-      const response = await fetch(`https://server-production-3bdc.up.railway.app/users/GetTales/:${1}/:${10}`, {
+      const response = await fetch(`http://192.168.29.62:5000/users/GetTales/:${1}/:${10}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -217,7 +175,7 @@ const Chats = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (contacts && contactDetails && tales) {
+      if ((contacts.length > 0 && contactDetails.length > 0 && tales) || showFollowRecommendation) {
         setLoading(false);
       }
     }, [contacts, contactDetails, tales])
@@ -225,7 +183,7 @@ const Chats = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (contacts && !contactDetails) {
+      if (contacts.length > 0 && contactDetails.length === 0 && !showFollowRecommendation) {
         getContactsDetails(CustomUUID, encryptedIdToken);
         setSearchDisabled(false);
       }
@@ -234,7 +192,7 @@ const Chats = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (CustomUUID && encryptedIdToken && !contacts) {
+      if (CustomUUID && encryptedIdToken && contacts.length === 0 && !showFollowRecommendation) {
         getChatContacts(CustomUUID, encryptedIdToken);
         if (!tales) {
           getContactTales(CustomUUID, encryptedIdToken);
@@ -251,46 +209,85 @@ const Chats = ({ navigation }) => {
     }, [CustomUUID, encryptedIdToken])
   );
 
+
+  useFocusEffect(
+    useCallback(() => {
+      if ((contactDetails.length > 0 && contacts.length > 0) && (filteredContactDetails.length === 0 || filteredContacts.length === 0)) {
+        filterChats('All');
+      }
+    }, [contactDetails, contacts])
+  );
+
+
+  const filterChats = (filter) => {
+    let filterContactDetails = [];
+    let filterContacts = [];
+
+    if (filter === 'All') {
+      setfilteredContactDetails([...contactDetails])
+      setfilteredContacts([...contacts])
+    }
+
+    if (filter === 'Unread') {
+      for (let i = 0; i < contactDetails.length; i++) {
+        if ((contacts[i].lastMessage.senderId !== CustomUUID) && (contacts[i].lastMessage.readStatus === 'unread')) {
+          filterContacts.push(contacts[i]);
+          filterContactDetails.push(contactDetails[i])
+        }
+      }
+      setfilteredContactDetails([...filterContactDetails])
+      setfilteredContacts([...filterContacts])
+    }
+
+  }
+
+
   return (
     <View style={styles.MainContainer}>
-      <Text style={styles.PageTitle}>Chats</Text>
+      <View style={styles.TitleContainer}>
+        <Text style={styles.PageTitle}>Chats</Text>
+      </View>
       <ScrollView style={styles.MainContentStyle} contentContainerStyle={styles.MainContent}>
         <View>
           <Pressable onPress={() => { navigation.navigate('ChatSearch', { contactDetails: contactDetails, contacts: contacts }) }} disabled={searchDisabled} style={styles.SearchContainer}>
-            <Image source={require('../assets/Icons/Search.png')} style={styles.SearchIcon} />
-            <Text style={styles.SearchText}>Search</Text>
+            <Image source={require('../assets/Icons/animeIcons/SearchIcon.png')} style={styles.SearchIcon} />
+            <Text style={styles.SearchText}>Search messages</Text>
           </Pressable>
         </View>
+        <FilterAllUnread firstFuncText={'All'} secondFuncText={'Unread'} onAllPress={() => { filterChats('All') }} onUnreadPress={() => { filterChats('Unread') }} />
         {loading ?
           <View style={styles.LoadingContainer}>
             <LoaderAnimation size={40} color={'#49505B'} />
-          </View> : <>
-            <View style={styles.TalesSection}>
-              <AddTale />
-              {(ownTale.tale.length > 0) && <TaleCard data={ownTale} CustomUUID={CustomUUID} />}
-              {tales && tales.map((tale, index) => {
-                return <TaleCard key={index} data={tale} />
-              })}
-            </View>
-            <View style={styles.ChatCardsSection}>
-              {contactDetails && contactDetails.map((contact, index) => {
-                return (
-                  <ChatCard key={index} timestamp={contacts[index].lastMessage.timestamp || contacts[index].createdAt} username={contact.username}
-                    profileImage={contact.profileImage} activityStatus={contact.activityStatus} ExpoPushToken={contact.ExpoPushToken} lastMessage={contacts[index].lastMessage}
-                    readStatus={(contacts[index].lastMessage.senderId !== CustomUUID && contacts[index].lastMessage.readStatus === 'unread') ? 'unread' : 'read'}
-                    chatId={contacts[index].chatId} blockedFromOtherSide={contact.blockedFromOtherSide} blockedFromOurSide={contact.blockedFromOurSide} lastActive={contact.lastActive} />
-                )
-              })}
-            </View>
-          </>}
+          </View> :
+
+          <>
+            {!showFollowRecommendation ?
+              <>
+                <View style={styles.TalesSection}>
+                  <AddTale />
+                  {(ownTale.tale.length > 0) && <TaleCard data={ownTale} CustomUUID={CustomUUID} />}
+                  {tales && tales.map((tale, index) => {
+                    return <TaleCard key={index} data={tale} />
+                  })}
+                </View>
+                <View style={styles.ChatCardsSection}>
+                  <ChatCard />
+                  {(filteredContactDetails.length > 0) && filteredContactDetails?.map((contact, index) => {
+                    return (
+                      <ChatCard key={index} timestamp={filteredContacts[index].lastMessage.timestamp || filteredContacts[index].createdAt} username={contact.username}
+                        profileImage={contact.profileImage} activityStatus={contact.activityStatus} ExpoPushToken={contact.ExpoPushToken} lastMessage={filteredContacts[index].lastMessage}
+                        readStatus={(fil[index].lastMessage.senderId !== CustomUUID && filteredContacts[index].lastMessage.readStatus === 'unread') ? 'unread' : 'read'}
+                        chatId={filteredContacts[index].chatId} blockedFromOtherSide={contact.blockedFromOtherSide} blockedFromOurSide={contact.blockedFromOurSide} lastActive={contact.lastActive} />
+                    )
+                  })}
+                </View>
+              </>
+              :
+              <FollowRecommendations />
+            }
+          </>
+        }
       </ScrollView>
-      {(!showAds || showAds === false) &&
-        <View style={{ position: 'absolute', bottom: 0 }}>
-          <BannerAd
-            unitId={bannerAdUnitId}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-        </View>}
     </View>
   )
 }
@@ -302,38 +299,49 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: '100%',
   },
-  PageTitle: {
+  TitleContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    flexDirection: 'row',
     paddingHorizontal: moderateScale(16),
     paddingTop: moderateScale(30),
+  },
+  PageTitle: {
     fontSize: Height * 0.026,
-    color: '#49505B',
+    color: '#1b160b',
     fontWeight: '900',
+    fontFamily: 'PlusJakartaSans',
+  },
+  PencilIcon: {
+    height: moderateScale(30),
+    width: moderateScale(30),
   },
   MainContent: {},
   SearchContainer: {
     marginHorizontal: moderateScale(16),
-    marginTop: moderateScale(20),
-    height: moderateScale(32),
-    backgroundColor: '#F3F4F6',
-    borderRadius: moderateScale(6),
+    marginTop: moderateScale(12),
+    height: moderateScale(40),
+    backgroundColor: '#f5efe8',
+    borderRadius: moderateScale(12),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: moderateScale(10),
     gap: moderateScale(10),
   },
   SearchIcon: {
-    height: moderateScale(18),
-    width: moderateScale(18),
+    height: moderateScale(22),
+    width: moderateScale(22),
   },
   SearchText: {
-    fontSize: Height * 0.018,
+    fontSize: Height * 0.02,
     width: '90%',
-    color: '#c3c3c3',
+    color: '#a3814a',
+    fontFamily: 'PlusJakartaSans',
   },
   TalesSection: {
     paddingVertical: moderateScale(12),
     paddingHorizontal: moderateScale(16),
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#f5efe8',
     marginTop: moderateScale(20),
     flexDirection: 'row',
     gap: moderateScale(18),
@@ -348,4 +356,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  ChatsFilterButtonContainer: {
+    marginHorizontal: moderateScale(16),
+    marginTop: moderateScale(14),
+    height: moderateScale(40),
+    backgroundColor: '#f5efe8',
+    borderRadius: moderateScale(50),
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(3),
+  },
+  ChatsFilterButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: moderateScale(34),
+    borderRadius: moderateScale(50),
+
+  },
+  ChatsFilterButtonText: {
+    fontSize: Height * 0.018,
+    color: '#a3814a',
+    fontFamily: 'PlusJakartaSans',
+  },
+
 });

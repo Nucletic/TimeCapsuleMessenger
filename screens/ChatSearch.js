@@ -64,11 +64,11 @@ const ChatSearch = ({ navigation, route }) => {
     <View style={styles.ChatSearch}>
       <View style={styles.ChatSearchNav}>
         <Pressable onPress={() => { navigation.goBack() }} style={styles.BackButton}>
-          <Image source={require('../assets/Icons/BackButton.png')} style={styles.BackButtonImage} />
+          <Image source={require('../assets/Icons/animeIcons/BackButton.png')} style={styles.BackButtonImage} />
         </Pressable>
         <View style={styles.SearchContainer}>
-          <Image source={require('../assets/Icons/Search.png')} style={styles.SearchIcon} />
-          <TextInput ref={inputRef} style={styles.SearchInput} value={searchQuery} onChangeText={(text) => { setSearchQuery(text) }} placeholder='Search' placeholderTextColor={'#C3C3C3'} />
+          <Image source={require('../assets/Icons/animeIcons/SearchIcon.png')} style={styles.SearchIcon} />
+          <TextInput ref={inputRef} style={styles.SearchInput} value={searchQuery} onChangeText={(text) => { setSearchQuery(text) }} placeholder='Search messages' placeholderTextColor={'#a3814a'} />
         </View>
       </View>
 
@@ -116,17 +116,18 @@ const styles = StyleSheet.create({
   },
   SearchContainer: {
     paddingHorizontal: moderateScale(8),
-    paddingVertical: moderateScale(3),
     gap: moderateScale(10),
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3F4F6',
-    borderRadius: moderateScale(8),
+    height: moderateScale(40),
+    backgroundColor: '#f5efe8',
+    borderRadius: moderateScale(12),
     width: Width - moderateScale(32) - moderateScale(10) - moderateScale(30)
   },
   SearchIcon: {
-    width: moderateScale(18),
-    height: moderateScale(18),
+    width: moderateScale(22),
+    height: moderateScale(22),
   },
   SearchInput: {
     fontSize: Height * 0.019,
