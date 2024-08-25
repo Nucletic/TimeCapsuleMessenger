@@ -1,0 +1,62 @@
+1. userService.js
+Purpose: Handles all user-related operations.
+Possible Functions:
+getUserProfile(userId)
+updateUserProfile(userId, userData)
+deleteUserAccount(userId)
+fetchAllUsers()
+2. authService.js
+Purpose: Manages authentication and authorization.
+Possible Functions:
+login(credentials)
+register(userData)
+logout()
+resetPassword(email)
+verifyToken(token)
+3. messageService.js
+Purpose: Manages messaging features.
+Possible Functions:
+sendMessage(senderId, receiverId, messageData)
+fetchMessages(conversationId)
+deleteMessage(messageId)
+markMessagesAsRead(conversationId)
+4. relationshipService.js
+Purpose: Handles user relationships, like following, unfollowing, blocking, etc.
+Possible Functions:
+followUser(followerId, followingId)
+unfollowUser(followerId, followingId)
+blockUser(blockerId, blockedId)
+getFollowers(userId)
+getFollowing(userId)
+5. mediaService.js
+Purpose: Manages media-related functionalities, like sending images or videos.
+Possible Functions:
+uploadMedia(mediaData)
+getMedia(mediaId)
+deleteMedia(mediaId)
+6. storyService.js
+Purpose: Manages user stories, viewing stories, and reacting to stories.
+Possible Functions:
+postStory(userId, storyData)
+getUserStories(userId)
+getStoryReactions(storyId)
+addStoryReaction(storyId, reactionData)
+deleteStory(storyId)
+7. notificationService.js
+Purpose: Manages notifications for various user activities.
+Possible Functions:
+getNotifications(userId)
+markNotificationAsRead(notificationId)
+sendNotification(notificationData)
+8. searchService.js
+Purpose: Handles searching for users, messages, or other data.
+Possible Functions:
+searchUsers(query)
+searchMessages(query)
+searchStories(query)
+9. analyticsService.js
+Purpose: Manages analytics and user activity tracking.
+Possible Functions:
+trackUserActivity(activityData)
+getAnalyticsData(userId)
+generateReport(params)
